@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 let ProductSchema = new Schema({
     name: {type: String},
     price: {type: String},
-    pic: {type: String}
+    banner: {type: Schema.Types.ObjectId, ref: 'Images'}
 }, {
     timestamps: true
 });
