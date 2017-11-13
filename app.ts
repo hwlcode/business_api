@@ -27,7 +27,7 @@ bannerRouter(app);
 loginRouter(app);
 webApiRouter(app);
 
-app.listen(8080, '47.96.16.226', () => {
-    console.log('app is running at http://47.96.16.226:8080');
+app.listen(8000, 'localhost', () => {
+    console.log('app is running at http://localhost:8000');
 });
 
