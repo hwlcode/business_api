@@ -47,7 +47,7 @@ function loginRouter(app) {
         const body = req.body;
         (async () => {
             if (body.phoneCode == verifyCode) {
-                await Models.CustomModel.findOrCreate({
+                await (Models.CustomModel as any).findOrCreate({
                     phone: body.phone
                 });
                 res.json({
