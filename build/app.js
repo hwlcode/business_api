@@ -24,6 +24,6 @@ upload_1.uploaderRouter(app);
 banner_1.bannerRouter(app);
 login_1.loginRouter(app);
 web_1.webApiRouter(app);
-app.listen(8000, '172.16.191.125', function () {
-    console.log('app is running at http://172.16.191.125:8000');
+app.listen(8000, '47.96.16.226', function () {
+    console.log('app is running at http://47.96.16.226:8000');
 });
