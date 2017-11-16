@@ -53,6 +53,9 @@ function loginRouter(app) {
     app.get('/api/verifyCode', function (req, res) {
         var PhoneNumbers = req.query.phone;
         verifyCode = MathRand(6);
+        if (verifyCode.length < 6) {
+            verifyCode = verifyCode + '0';
+        }
         var accessKeyId = 'LTAI4nllpXNPtH1z';
         var secretAccessKey = 'K3r32rZC2zBXVZneOrjrcuZQOd2Ocs';
         //初始化sms_client
@@ -71,7 +74,6 @@ function loginRouter(app) {
             }
         }, function (err) {
             if (err) {
-                console.log(err);
                 res.json({ code: 1, msg: '请求次数太频繁，请5分钟后再试！' });
             }
         });

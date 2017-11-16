@@ -18,6 +18,9 @@ function loginRouter(app) {
     app.get('/api/verifyCode', (req, res) => {
         const PhoneNumbers = req.query.phone;
         verifyCode = MathRand(6);
+        if(verifyCode.length < 6){
+            verifyCode = verifyCode + '0';
+        }
 
         const accessKeyId = 'LTAI4nllpXNPtH1z'
         const secretAccessKey = 'K3r32rZC2zBXVZneOrjrcuZQOd2Ocs'
@@ -37,7 +40,6 @@ function loginRouter(app) {
             }
         }, function (err) {
             if (err) {
-                console.log(err);
                 res.json({code: 1, msg: '请求次数太频繁，请5分钟后再试！'});
             }
         })
