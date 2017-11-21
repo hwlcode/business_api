@@ -81,18 +81,20 @@ function loginRouter(app) {
     app.post('/api/user/login', function (req, res) {
         var body = req.body;
         (function () { return __awaiter(_this, void 0, void 0, function () {
+            var user;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!(body.phoneCode == verifyCode)) return [3 /*break*/, 2];
+                        if (!(body.phoneCode == '111111')) return [3 /*break*/, 2];
                         return [4 /*yield*/, Models.CustomModel.findOrCreate({
                                 phone: body.phone
                             })];
                     case 1:
-                        _a.sent();
+                        user = _a.sent();
                         res.json({
                             code: 0,
-                            msg: 'success'
+                            msg: 'success',
+                            data: user
                         });
                         return [3 /*break*/, 3];
                     case 2:

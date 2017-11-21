@@ -3,7 +3,7 @@ import * as findOrCreate from 'mongoose-findorcreate';
 const Schema = mongoose.Schema;
 
 
-let CustomSchema = new Schema({
+let UserSchema = new Schema({
     name: {type: String, default: null},
     sex: {type: String, default: null},
     birth: {type: String, default: null},
@@ -15,5 +15,5 @@ let CustomSchema = new Schema({
 }, {
     timestamps: true
 });
-CustomSchema.plugin(findOrCreate);
-mongoose.model('Custom', CustomSchema);
+UserSchema.plugin(findOrCreate);
+mongoose.model('User', UserSchema);
