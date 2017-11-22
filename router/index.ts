@@ -33,6 +33,32 @@ function productRouter(app) {
         })();
     });
 
+    app.get('/api/search', (req, res) => {
+        let keywords = req.query.keywords || '';
+        let pattern = new RegExp(keywords, "i");
+        let page = parseInt(req.query.keywords) || 1;
+        let limit = 3;
+        let skip = (page - 1) * limit;
+        (async () => {
+            let opt = {
+                path: 'banner',
+                select: 'path'
+            };
+            const productList = await Models.ProductModel.find({
+                name: pattern
+            }).populate(opt).skip(skip).limit(limit).sort({
+                createdAt: -1
+            });
+            const products = await Models.ProductModel.find();
+            res.json({
+                code: 0,
+                msg: 'success',
+                total: products.length,
+                data: productList
+            });
+        })();
+    });
+
     app.get('/api/product/:id', (req, res) => {
         if (req.params.id != 0) {
             let id = new ObjectId(req.params.id);

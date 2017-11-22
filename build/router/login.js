@@ -81,16 +81,21 @@ function loginRouter(app) {
     app.post('/api/user/login', function (req, res) {
         var body = req.body;
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var opts;
+            var opts, user;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!(body.phoneCode == '111111')) return [3 /*break*/, 2];
+                        if (!(body.phoneCode == '111111')) return [3 /*break*/, 3];
                         opts = [{
                                 path: 'avatar',
                                 select: 'path'
                             }];
                         return [4 /*yield*/, Models.CustomModel.findOrCreate({
+                                phone: body.phone
+                            })];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, Models.CustomModel.findOne({
                                 phone: body.phone
                             }).populate(opts).exec(function (err, doc) {
                                 res.json({
@@ -99,16 +104,16 @@ function loginRouter(app) {
                                     data: doc
                                 });
                             })];
-                    case 1:
-                        _a.sent();
-                        return [3 /*break*/, 3];
                     case 2:
+                        user = _a.sent();
+                        return [3 /*break*/, 4];
+                    case 3:
                         res.json({
                             code: 1,
                             msg: '验证码不正确，请输新输入'
                         });
-                        _a.label = 3;
-                    case 3: return [2 /*return*/];
+                        _a.label = 4;
+                    case 4: return [2 /*return*/];
                 }
             });
         }); })();

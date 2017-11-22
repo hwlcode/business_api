@@ -56,6 +56,9 @@ function loginRouter(app) {
                 }];
                 await (Models.CustomModel as any).findOrCreate({
                     phone: body.phone
+                });
+                let user = await  Models.CustomModel.findOne({
+                    phone: body.phone
                 }).populate(opts).exec((err, doc) => {
                     res.json({
                         code: 0,

@@ -85,6 +85,42 @@ function productRouter(app) {
             });
         }); })();
     });
+    app.get('/api/search', function (req, res) {
+        var keywords = req.query.keywords || '';
+        var pattern = new RegExp(keywords, "i");
+        var page = parseInt(req.query.keywords) || 1;
+        var limit = 3;
+        var skip = (page - 1) * limit;
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            var opt, productList, products;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        opt = {
+                            path: 'banner',
+                            select: 'path'
+                        };
+                        return [4 /*yield*/, Models.ProductModel.find({
+                                name: pattern
+                            }).populate(opt).skip(skip).limit(limit).sort({
+                                createdAt: -1
+                            })];
+                    case 1:
+                        productList = _a.sent();
+                        return [4 /*yield*/, Models.ProductModel.find()];
+                    case 2:
+                        products = _a.sent();
+                        res.json({
+                            code: 0,
+                            msg: 'success',
+                            total: products.length,
+                            data: productList
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
     app.get('/api/product/:id', function (req, res) {
         if (req.params.id != 0) {
             var id_1 = new ObjectId(req.params.id);
