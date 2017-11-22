@@ -81,21 +81,26 @@ function loginRouter(app) {
     app.post('/api/user/login', function (req, res) {
         var body = req.body;
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var user;
+            var opts;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!(body.phoneCode == '111111')) return [3 /*break*/, 2];
+                        opts = [{
+                                path: 'avatar',
+                                select: 'path'
+                            }];
                         return [4 /*yield*/, Models.CustomModel.findOrCreate({
                                 phone: body.phone
+                            }).populate(opts).exec(function (err, doc) {
+                                res.json({
+                                    code: 0,
+                                    msg: 'success',
+                                    data: doc
+                                });
                             })];
                     case 1:
-                        user = _a.sent();
-                        res.json({
-                            code: 0,
-                            msg: 'success',
-                            data: user
-                        });
+                        _a.sent();
                         return [3 /*break*/, 3];
                     case 2:
                         res.json({

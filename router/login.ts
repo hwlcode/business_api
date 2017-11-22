@@ -50,14 +50,19 @@ function loginRouter(app) {
         (async () => {
             if (body.phoneCode == '111111') {
             // if (body.phoneCode == verifyCode) {
-                let user = await (Models.CustomModel as any).findOrCreate({
+                let opts = [{
+                    path: 'avatar',
+                    select: 'path'
+                }];
+                await (Models.CustomModel as any).findOrCreate({
                     phone: body.phone
+                }).populate(opts).exec((err, doc) => {
+                    res.json({
+                        code: 0,
+                        msg: 'success',
+                        data: doc
+                    })
                 });
-                res.json({
-                    code: 0,
-                    msg: 'success',
-                    data: user
-                })
             } else {
                 res.json({
                     code: 1,
