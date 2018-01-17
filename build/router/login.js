@@ -37,6 +37,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var SMSClient = require("@alicloud/sms-sdk");
 var Models = require("../models");
+var ObjectId = require('mongodb').ObjectID;
+var md5 = require("blueimp-md5");
 var verifyCode = '';
 setTimeout(function () {
     verifyCode = '';
@@ -80,12 +82,13 @@ function loginRouter(app) {
     });
     app.post('/api/user/login', function (req, res) {
         var body = req.body;
+        var password = md5('111111');
         (function () { return __awaiter(_this, void 0, void 0, function () {
             var opts, user;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!(body.phoneCode == '111111')) return [3 /*break*/, 3];
+                        if (!(body.phoneCode == password)) return [3 /*break*/, 3];
                         opts = [{
                                 path: 'avatar',
                                 select: 'path'
@@ -119,7 +122,7 @@ function loginRouter(app) {
         }); })();
     });
     app.get('/api/profile', function (req, res) {
-        var phone = req.query.phone;
+        var id = new ObjectId(req.query.id);
         (function () { return __awaiter(_this, void 0, void 0, function () {
             var opts;
             return __generator(this, function (_a) {
@@ -130,7 +133,7 @@ function loginRouter(app) {
                                 select: 'path'
                             }];
                         return [4 /*yield*/, Models.CustomModel.findOne({
-                                phone: phone
+                                _id: id
                             }).populate(opts).exec(function (err, populatedDoc) {
                                 res.json({
                                     code: 0,
@@ -148,19 +151,50 @@ function loginRouter(app) {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Headers", "Content-Type");
         var body = req.body;
-        console.log(body);
         (function () { return __awaiter(_this, void 0, void 0, function () {
             var user;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, Models.CustomModel.update({
-                            phone: body.phone
+                            _id: new ObjectId(req.body.id)
                         }, body).exec()];
                     case 1:
                         user = _a.sent();
                         res.json({
                             code: 0,
                             data: user
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
+    app.get('/api/users', function (req, res) {
+        var page = parseInt(req.query.q) || 1;
+        var limit = 3;
+        var skip = (page - 1) * limit;
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            var opt, userList, users;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        opt = {
+                            path: 'avatar',
+                            select: 'path'
+                        };
+                        return [4 /*yield*/, Models.CustomModel.find().populate(opt).skip(skip).limit(limit).sort({
+                                createdAt: -1
+                            })];
+                    case 1:
+                        userList = _a.sent();
+                        return [4 /*yield*/, Models.CustomModel.find()];
+                    case 2:
+                        users = _a.sent();
+                        res.json({
+                            code: 0,
+                            msg: 'success',
+                            total: users.length,
+                            data: userList
                         });
                         return [2 /*return*/];
                 }

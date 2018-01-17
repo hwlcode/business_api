@@ -255,7 +255,7 @@ var BannerFormComponent = (function () {
         if (this.formModel.valid && this.formModel.value.banner !== null) {
             var url = '/api/saveBanner';
             var self_1 = this;
-            var params = new __WEBPACK_IMPORTED_MODULE_3__angular_http__["b" /* URLSearchParams */]();
+            var params = new __WEBPACK_IMPORTED_MODULE_3__angular_http__["c" /* URLSearchParams */]();
             console.log(this.formModel.value.name);
             params.append('name', this.formModel.value.name);
             params.append('link', this.formModel.value.link);
@@ -283,7 +283,7 @@ BannerFormComponent = __decorate([
         template: __webpack_require__("../../../../../src/app/banner/banner-form/banner-form.component.html"),
         styles: [__webpack_require__("../../../../../src/app/banner/banner-form/banner-form.component.css")]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__angular_http__["c" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_http__["c" /* Http */]) === "function" && _b || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__angular_http__["b" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_http__["b" /* Http */]) === "function" && _b || Object])
 ], BannerFormComponent);
 
 var _a, _b;
@@ -399,7 +399,7 @@ BannerListComponent = __decorate([
         template: __webpack_require__("../../../../../src/app/banner/banner-list/banner-list.component.html"),
         styles: [__webpack_require__("../../../../../src/app/banner/banner-list/banner-list.component.css")]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_http__["c" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_http__["c" /* Http */]) === "function" && _b || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_http__["b" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_http__["b" /* Http */]) === "function" && _b || Object])
 ], BannerListComponent);
 
 var _a, _b;
@@ -516,7 +516,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/custom/custom-list/custom-list.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<p>\n  custom-list works!\n</p>\n"
+module.exports = "<div class=\"row\">\n    <div class=\"col-xs-12\">\n        <div class=\"box\">\n            <!--<div class=\"box-header\">-->\n                <!--<h3 class=\"box-title\">-->\n                <!--</h3>-->\n            <!--</div>-->\n            <!-- /.box-header -->\n            <div class=\"box-body table-responsive no-padding\">\n                <table class=\"table table-hover text-center\">\n                    <tr>\n                        <th>ID</th>\n                        <th>头像</th>\n                        <th>名称</th>\n                        <th>手机</th>\n                        <th>性别</th>\n                        <th>生日</th>\n                        <th>住址</th>\n                        <th>积分</th>\n                        <!--<th width=\"150\">操作</th>-->\n                    </tr>\n                    <tr *ngFor=\"let user of users; let i = index;\">\n                        <td>{{ i+1 }}</td>\n                        <td><img src=\"{{user.avatar.path}}\" alt=\"\" width=\"80\" height=\"80\"></td>\n                        <td>{{user.name}}</td>\n                        <td>{{user.phone}}</td>\n                        <td>{{user.sex}}</td>\n                        <td>{{user.birth}}</td>\n                        <td>{{user.address}}</td>\n                        <td>{{user.code}}分</td>\n                        <!--<td>-->\n                            <!--<button class=\"btn btn-info btn-xs\" (click)=\"update(product)\"><i class=\"fa fa-pencil-square-o\" aria-hidden=\"true\"></i></button>-->\n                        <!--</td>-->\n                    </tr>\n                </table>\n            </div>\n            <!-- /.box-body -->\n            <div class=\"box-footer clearfix\">\n                <ngb-pagination [collectionSize]=\"collectionSize\" [(page)]=\"page\" [pageSize]=\"pageSize\" aria-label=\"Default pagination\" (pageChange)=\"pageChange($event)\"></ngb-pagination>\n            </div>\n        </div>\n    </div>\n</div>\n"
 
 /***/ }),
 
@@ -525,6 +525,8 @@ module.exports = "<p>\n  custom-list works!\n</p>\n"
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__("../../../router/@angular/router.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__("../../../http/@angular/http.es5.js");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CustomListComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -536,10 +538,40 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
+
+
 var CustomListComponent = (function () {
-    function CustomListComponent() {
+    function CustomListComponent(router, http) {
+        this.router = router;
+        this.http = http;
+        this.page = 1;
+        this.collectionSize = 0;
+        this.pageSize = 3;
     }
     CustomListComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.getProducts().subscribe(function (res) {
+            if (res.code === 0) {
+                _this.users = res.data;
+                _this.collectionSize = res.total;
+            }
+        });
+    };
+    CustomListComponent.prototype.update = function (product) {
+        this.router.navigateByUrl('/product/' + product._id);
+    };
+    CustomListComponent.prototype.getProducts = function (page) {
+        if (page === void 0) { page = 1; }
+        return this.http.get('/api/users?q=' + page).map(function (res) { return res.json(); });
+    };
+    CustomListComponent.prototype.pageChange = function (page) {
+        var _this = this;
+        this.getProducts(page).subscribe(function (res) {
+            if (res.code === 0) {
+                _this.users = res.data;
+                _this.collectionSize = res.total;
+            }
+        });
     };
     return CustomListComponent;
 }());
@@ -549,9 +581,10 @@ CustomListComponent = __decorate([
         template: __webpack_require__("../../../../../src/app/custom/custom-list/custom-list.component.html"),
         styles: [__webpack_require__("../../../../../src/app/custom/custom-list/custom-list.component.css")]
     }),
-    __metadata("design:paramtypes", [])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_http__["b" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_http__["b" /* Http */]) === "function" && _b || Object])
 ], CustomListComponent);
 
+var _a, _b;
 //# sourceMappingURL=custom-list.component.js.map
 
 /***/ }),
@@ -882,7 +915,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/products/product-form/product-form.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"box box-info\">\n    <div class=\"box-header with-border\">\n        <h3 class=\"box-title\">产品信息</h3>\n    </div>\n    <!-- /.box-header -->\n    <!-- form start -->\n    <form class=\"form-horizontal\" [formGroup]=\"formModel\">\n        <div class=\"box-body\">\n            <div class=\"form-group\">\n                <label class=\"col-sm-2 control-label\">产品名称</label>\n                <div class=\"col-sm-6\"\n                     [class.has-error]=\"formModel.get('name').touched && formModel.hasError('required', 'name') || formModel.hasError('minlength', 'name')\">\n                    <input type=\"text\" class=\"form-control\" id=\"productName\" formControlName=\"name\">\n                    <div class=\"help-block\"\n                         [class.hidden]=\"formModel.get('name').untouched || !formModel.hasError('required', 'name')\">\n                        产品名称必填\n                    </div>\n                    <div class=\"help-block\"\n                         [class.hidden]=\"formModel.get('name').untouched || !formModel.hasError('minlength', 'name')\">\n                        至少需要输入2两个字\n                    </div>\n                </div>\n            </div>\n            <div class=\"form-group\">\n                <label class=\"col-sm-2 control-label\">单价</label>\n\n                <div class=\"col-sm-3\"\n                     [class.has-error]=\"formModel.get('price').touched && formModel.hasError('number', 'price')\">\n                    <div class=\"input-group\">\n                        <input type=\"text\" class=\"form-control\" formControlName=\"price\">\n                        <span class=\"input-group-addon\">元/斤</span>\n                    </div>\n                    <div class=\"help-block\"\n                         [class.hidden]=\"formModel.get('price').untouched || !formModel.hasError('number', 'price')\">\n                        {{formModel.getError('number', 'price')?.description}}\n                    </div>\n                </div>\n            </div>\n            <div class=\"form-group\">\n                <label class=\"col-sm-2 control-label\">产品图片</label>\n\n                <div class=\"col-sm-3\">\n                    <input type=\"hidden\" formControlName=\"banner\">\n                    <dropzone [config]=\"config\" [message]=\"'点击上传产品图片'\" (error)=\"onUploadError($event)\"\n                              (success)=\"onUploadSuccess($event)\"></dropzone>\n                </div>\n            </div>\n        </div>\n        <!-- /.box-body -->\n        <div class=\"box-footer\">\n            <button class=\"btn btn-default\" (click)=\"cannel()\">取消</button>\n            <button class=\"btn btn-info pull-right\" *ngIf=\"isSave\" (click)=\"save()\">保存</button>\n            <button class=\"btn btn-info pull-right\" *ngIf=\"!isSave\" (click)=\"update(product)\">更新</button>\n        </div>\n        <!-- /.box-footer -->\n    </form>\n</div>\n"
+module.exports = "<div class=\"box box-info\">\n    <div class=\"box-header with-border\">\n        <h3 class=\"box-title\">产品信息</h3>\n    </div>\n    <!-- /.box-header -->\n    <!-- form start -->\n    <form class=\"form-horizontal\" [formGroup]=\"formModel\">\n        <div class=\"box-body\">\n            <div class=\"form-group\">\n                <label class=\"col-sm-2 control-label\">产品名称</label>\n                <div class=\"col-sm-6\"\n                     [class.has-error]=\"formModel.get('name').touched && formModel.hasError('required', 'name') || formModel.hasError('minlength', 'name')\">\n                    <input type=\"text\" class=\"form-control\" id=\"productName\" formControlName=\"name\">\n                    <div class=\"help-block\"\n                         [class.hidden]=\"formModel.get('name').untouched || !formModel.hasError('required', 'name')\">\n                        产品名称必填\n                    </div>\n                    <div class=\"help-block\"\n                         [class.hidden]=\"formModel.get('name').untouched || !formModel.hasError('minlength', 'name')\">\n                        至少需要输入2两个字\n                    </div>\n                </div>\n            </div>\n            <div class=\"form-group\">\n                <label class=\"col-sm-2 control-label\">单价</label>\n\n                <div class=\"col-sm-3\"\n                     [class.has-error]=\"formModel.get('price').touched && formModel.hasError('number', 'price')\">\n                    <div class=\"input-group\">\n                        <input type=\"text\" class=\"form-control\" formControlName=\"price\">\n                        <span class=\"input-group-addon\">元/斤</span>\n                    </div>\n                    <div class=\"help-block\"\n                         [class.hidden]=\"formModel.get('price').untouched || !formModel.hasError('number', 'price')\">\n                        {{formModel.getError('number', 'price')?.description}}\n                    </div>\n                </div>\n            </div>\n            <div class=\"form-group\">\n                <label class=\"col-sm-2 control-label\">产品图片</label>\n\n                <div class=\"col-sm-3\">\n                    <input type=\"hidden\" formControlName=\"banner\">\n                    <dropzone [config]=\"config\" [message]=\"'点击上传产品图片'\" (error)=\"onUploadError($event)\"\n                              (success)=\"onUploadSuccess($event)\"></dropzone>\n                </div>\n            </div>\n            <div class=\"form-group\">\n                <label class=\"col-sm-2 control-label\">积分兑换</label>\n                <div class=\"col-sm-2\"\n                     [class.has-error]=\"formModel.get('code').touched && formModel.hasError('required', 'code')\">\n                    <input type=\"number\" class=\"form-control\" formControlName=\"code\">\n                    <div class=\"help-block\"\n                         [class.hidden]=\"formModel.get('code').untouched || !formModel.hasError('required', 'code')\">\n                        积分兑换必填\n                    </div>\n                </div>\n            </div>\n        </div>\n        <!-- /.box-body -->\n        <div class=\"box-footer\">\n            <button class=\"btn btn-default\" (click)=\"cannel()\">取消</button>\n            <button class=\"btn btn-info pull-right\" *ngIf=\"isSave\" (click)=\"save()\">保存</button>\n            <button class=\"btn btn-info pull-right\" *ngIf=\"!isSave\" (click)=\"update(product)\">更新</button>\n        </div>\n        <!-- /.box-footer -->\n    </form>\n</div>\n"
 
 /***/ }),
 
@@ -918,7 +951,7 @@ var ProductFormComponent = (function () {
         this.router = router;
         this.http = http;
         this.routeInfo = routeInfo;
-        this.product = new Product('', '', '', ''); // 数据还没有回来之前给一个默认值
+        this.product = new Product('', '', '', '', 0); // 数据还没有回来之前给一个默认值
         this.isSave = true;
         this.config = {
             url: '/api/upload',
@@ -933,25 +966,27 @@ var ProductFormComponent = (function () {
         this.formModel = fb.group({
             name: ['', [__WEBPACK_IMPORTED_MODULE_2__angular_forms__["f" /* Validators */].required, __WEBPACK_IMPORTED_MODULE_2__angular_forms__["f" /* Validators */].minLength(2)]],
             price: ['', [__WEBPACK_IMPORTED_MODULE_3__validators_validators__["a" /* number */]]],
-            banner: ['']
+            banner: [''],
+            code: [0]
         });
         var id = this.routeInfo.snapshot.params['id'];
         this.getProduct(id).subscribe(function (res) {
             if (id != 0) {
                 self.isSave = false;
             }
-            _this.product = res;
             _this.formModel.reset({
                 name: res.name,
-                price: res.price
+                price: res.price,
+                code: res.code
             });
+            _this.product = res;
         });
     };
     ProductFormComponent.prototype.onUploadError = function (event) {
         console.log(event);
     };
     ProductFormComponent.prototype.onUploadSuccess = function (event) {
-        this.formModel.value.banner = event[1].id;
+        this.formModel.controls['banner'].setValue(event[1].id);
     };
     ProductFormComponent.prototype.cannel = function () {
         this.router.navigateByUrl('/products');
@@ -960,10 +995,12 @@ var ProductFormComponent = (function () {
         if (this.formModel.valid && this.formModel.value.banner !== null) {
             var url = '/api/saveProduct';
             var self_1 = this;
-            var params = new __WEBPACK_IMPORTED_MODULE_4__angular_http__["b" /* URLSearchParams */]();
+            var params = new __WEBPACK_IMPORTED_MODULE_4__angular_http__["c" /* URLSearchParams */]();
             params.append('name', this.formModel.value.name);
             params.append('price', this.formModel.value.price);
             params.append('banner', this.formModel.value.banner);
+            params.append('code', this.formModel.value.code);
+            console.log(params);
             this.http.post(url, params)
                 .map(function (res) { return res.json(); })
                 .subscribe(function (data) {
@@ -980,10 +1017,11 @@ var ProductFormComponent = (function () {
         if (this.formModel.valid && this.formModel.value.banner !== null) {
             var url = '/api/updateProduct/' + product._id;
             var self_2 = this;
-            var params = new __WEBPACK_IMPORTED_MODULE_4__angular_http__["b" /* URLSearchParams */]();
+            var params = new __WEBPACK_IMPORTED_MODULE_4__angular_http__["c" /* URLSearchParams */]();
             params.append('name', this.formModel.value.name);
             params.append('price', this.formModel.value.price);
             params.append('banner', this.formModel.value.banner);
+            params.append('code', this.formModel.value.code);
             this.http.post(url, params)
                 .map(function (res) { return res.json(); })
                 .subscribe(function (data) {
@@ -1001,15 +1039,16 @@ ProductFormComponent = __decorate([
         template: __webpack_require__("../../../../../src/app/products/product-form/product-form.component.html"),
         styles: [__webpack_require__("../../../../../src/app/products/product-form/product-form.component.css")]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_4__angular_http__["c" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__angular_http__["c" /* Http */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["d" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["d" /* ActivatedRoute */]) === "function" && _c || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_4__angular_http__["b" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__angular_http__["b" /* Http */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["d" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["d" /* ActivatedRoute */]) === "function" && _c || Object])
 ], ProductFormComponent);
 
 var Product = (function () {
-    function Product(_id, banner, name, price) {
+    function Product(_id, banner, name, price, code) {
         this._id = _id;
         this.banner = banner;
         this.name = name;
         this.price = price;
+        this.code = code;
     }
     return Product;
 }());
@@ -1039,7 +1078,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/products/productlist/productlist.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"row\">\n    <div class=\"col-xs-12\">\n        <div class=\"box\">\n            <div class=\"box-header\">\n                <h3 class=\"box-title\">\n                    <button class=\"btn btn-primary btn-sm\" (click)=\"create()\"><i class=\"fa fa-plus\" aria-hidden=\"true\"></i> 新建</button>\n                </h3>\n\n                <!--<div class=\"box-tools\">-->\n                    <!--<div class=\"input-group input-group-sm\" style=\"width: 150px;\">-->\n                        <!--<input type=\"text\" name=\"table_search\" class=\"form-control pull-right\" placeholder=\"Search\">-->\n\n                        <!--<div class=\"input-group-btn\">-->\n                            <!--<button type=\"submit\" class=\"btn btn-default\"><i class=\"fa fa-search\"></i></button>-->\n                        <!--</div>-->\n                    <!--</div>-->\n                <!--</div>-->\n            </div>\n            <!-- /.box-header -->\n            <div class=\"box-body table-responsive no-padding\">\n                <table class=\"table table-hover text-center\">\n                    <tr>\n                        <th>ID</th>\n                        <th>图片</th>\n                        <th>名称</th>\n                        <th>单价</th>\n                        <th width=\"150\">操作</th>\n                    </tr>\n                    <tr *ngFor=\"let product of products; let i = index;\">\n                        <td>{{ i+1 }}</td>\n                        <td><img src=\"{{product.banner.path}}\" alt=\"\" width=\"80\" height=\"80\"></td>\n                        <td>{{product.name}}</td>\n                        <td>{{product.price}}元/斤</td>\n                        <td>\n                            <button class=\"btn btn-info btn-xs\" (click)=\"update(product)\"><i class=\"fa fa-pencil-square-o\" aria-hidden=\"true\"></i></button>\n                            <button class=\"btn btn-danger btn-xs\" (click)=\"remove(product)\"><i class=\"fa fa-trash-o\" aria-hidden=\"true\"></i></button>\n                        </td>\n                    </tr>\n                </table>\n            </div>\n            <!-- /.box-body -->\n            <div class=\"box-footer clearfix\">\n                <ngb-pagination [collectionSize]=\"collectionSize\" [(page)]=\"page\" [pageSize]=\"pageSize\" aria-label=\"Default pagination\" (pageChange)=\"pageChange($event)\"></ngb-pagination>\n            </div>\n        </div>\n    </div>\n</div>\n"
+module.exports = "<div class=\"row\">\n    <div class=\"col-xs-12\">\n        <div class=\"box\">\n            <div class=\"box-header\">\n                <h3 class=\"box-title\">\n                    <button class=\"btn btn-primary btn-sm\" (click)=\"create()\"><i class=\"fa fa-plus\" aria-hidden=\"true\"></i> 新建</button>\n                </h3>\n            </div>\n            <!-- /.box-header -->\n            <div class=\"box-body table-responsive no-padding\">\n                <table class=\"table table-hover text-center\">\n                    <tr>\n                        <th>ID</th>\n                        <th>图片</th>\n                        <th>名称</th>\n                        <th>单价</th>\n                        <th width=\"150\">操作</th>\n                    </tr>\n                    <tr *ngFor=\"let product of products; let i = index;\">\n                        <td>{{ i+1 }}</td>\n                        <td><img src=\"{{product.banner.path}}\" alt=\"\" width=\"80\" height=\"80\"></td>\n                        <td>{{product.name}}</td>\n                        <td>{{product.price}}元/斤</td>\n                        <td>\n                            <button class=\"btn btn-info btn-xs\" (click)=\"update(product)\"><i class=\"fa fa-pencil-square-o\" aria-hidden=\"true\"></i></button>\n                            <button class=\"btn btn-danger btn-xs\" (click)=\"remove(product)\"><i class=\"fa fa-trash-o\" aria-hidden=\"true\"></i></button>\n                        </td>\n                    </tr>\n                </table>\n            </div>\n            <!-- /.box-body -->\n            <div class=\"box-footer clearfix\">\n                <ngb-pagination [collectionSize]=\"collectionSize\" [(page)]=\"page\" [pageSize]=\"pageSize\" aria-label=\"Default pagination\" (pageChange)=\"pageChange($event)\"></ngb-pagination>\n            </div>\n        </div>\n    </div>\n</div>\n"
 
 /***/ }),
 
@@ -1117,7 +1156,7 @@ ProductlistComponent = __decorate([
         template: __webpack_require__("../../../../../src/app/products/productlist/productlist.component.html"),
         styles: [__webpack_require__("../../../../../src/app/products/productlist/productlist.component.css")]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_http__["c" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_http__["c" /* Http */]) === "function" && _b || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_http__["b" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_http__["b" /* Http */]) === "function" && _b || Object])
 ], ProductlistComponent);
 
 var _a, _b;

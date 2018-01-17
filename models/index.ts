@@ -1,7 +1,13 @@
 ///<reference path="../node_modules/@types/mongoose/index.d.ts"/>
 import * as mongoose from 'mongoose';
 
-const db = 'mongodb://127.0.0.1:27027/aniu';
+let db = '';
+if (process.env.NODE_ENV === 'production') {
+     db = 'mongodb://127.0.0.1:27027/aniu';
+}else{
+     db = 'mongodb://127.0.0.1:27017/aniu';
+}
+
 (mongoose as any).Promise = global.Promise;
 mongoose.connect(db, {useMongoClient: true}, err => {
     if (err) {

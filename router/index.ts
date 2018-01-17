@@ -13,7 +13,7 @@ function productRouter(app) {
 
     app.get('/api/productList', (req, res) => {
         let page = parseInt(req.query.q) || 1;
-        let limit = 3;
+        let limit = 10;
         let skip = (page - 1) * limit;
         (async () => {
             let opt = {
@@ -33,11 +33,11 @@ function productRouter(app) {
         })();
     });
 
-    app.get('/api/search', (req, res) => {
+    app.get('/api/products/list', (req, res) => {
         let keywords = req.query.keywords || '';
         let pattern = new RegExp(keywords, "i");
-        let page = parseInt(req.query.keywords) || 1;
-        let limit = 3;
+        let page = parseInt(req.query.page) || 1;
+        let limit = 6;
         let skip = (page - 1) * limit;
         (async () => {
             let opt = {
@@ -50,11 +50,13 @@ function productRouter(app) {
                 createdAt: -1
             });
             const products = await Models.ProductModel.find();
+            const isLast = (page * limit) >= products.length;
             res.json({
                 code: 0,
                 msg: 'success',
                 total: products.length,
-                data: productList
+                data: productList,
+                isLast: isLast
             });
         })();
     });

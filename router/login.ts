@@ -1,6 +1,9 @@
 import * as SMSClient from '@alicloud/sms-sdk'
 import * as Models from '../models';
 
+const ObjectId = require('mongodb').ObjectID;
+const md5 = require("blueimp-md5");
+
 let verifyCode = '';
 setTimeout(() => {
     verifyCode = '';
@@ -47,8 +50,10 @@ function loginRouter(app) {
 
     app.post('/api/user/login', (req, res) => {
         const body = req.body;
+        let password = md5('111111');
+
         (async () => {
-            if (body.phoneCode == '111111') {
+            if (body.phoneCode == password) {
             // if (body.phoneCode == verifyCode) {
                 let opts = [{
                     path: 'avatar',
@@ -76,14 +81,14 @@ function loginRouter(app) {
     });
 
     app.get('/api/profile', (req, res) => {
-        const phone = req.query.phone;
+        const id = new ObjectId(req.query.id);
         (async () => {
             let opts = [{
                 path: 'avatar',
                 select: 'path'
             }];
             await Models.CustomModel.findOne({
-                phone: phone
+                _id: id
             }).populate(opts).exec((err, populatedDoc) => {
                 res.json({
                     code: 0,
@@ -98,16 +103,38 @@ function loginRouter(app) {
         res.header("Access-Control-Allow-Headers", "Content-Type");
 
         const body = req.body;
-        console.log(body);
+
         (async () => {
             const user = await Models.CustomModel.update({
-                phone: body.phone
+                _id: new ObjectId(req.body.id)
             }, body).exec();
 
             res.json({
                 code: 0,
                 data: user
             })
+        })();
+    });
+
+    app.get('/api/users', (req, res) => {
+        let page = parseInt(req.query.q) || 1;
+        let limit = 3;
+        let skip = (page - 1) * limit;
+        (async () => {
+            let opt = {
+                path: 'avatar',
+                select: 'path'
+            };
+            const userList = await Models.CustomModel.find().populate(opt).skip(skip).limit(limit).sort({
+                createdAt: -1
+            });
+            const users = await Models.CustomModel.find();
+            res.json({
+                code: 0,
+                msg: 'success',
+                total: users.length,
+                data: userList
+            });
         })();
     })
 }

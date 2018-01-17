@@ -27,12 +27,14 @@ bannerRouter(app);
 loginRouter(app);
 webApiRouter(app);
 
+if (process.env.NODE_ENV === 'production') {
+    app.listen(8000, 'localhost', () => {
+        console.log('app is running at http://localhost:8000');
+    });
+}else{
+    app.listen(8000, 'localhost', () => {
+        console.log('app is running at http://localhost:8000');
+    });
+}
 
-// app.listen(8000, '192.168.20.92', () => {
-//     console.log('app is running at http://192.168.20.92:8000');
-// });
-
-app.listen(8000, 'localhost', () => {
-    console.log('app is running at http://localhost:8000');
-});
 

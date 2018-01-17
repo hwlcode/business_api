@@ -55,7 +55,7 @@ function productRouter(app) {
     });
     app.get('/api/productList', function (req, res) {
         var page = parseInt(req.query.q) || 1;
-        var limit = 3;
+        var limit = 10;
         var skip = (page - 1) * limit;
         (function () { return __awaiter(_this, void 0, void 0, function () {
             var opt, productList, products;
@@ -85,14 +85,14 @@ function productRouter(app) {
             });
         }); })();
     });
-    app.get('/api/search', function (req, res) {
+    app.get('/api/products/list', function (req, res) {
         var keywords = req.query.keywords || '';
         var pattern = new RegExp(keywords, "i");
-        var page = parseInt(req.query.keywords) || 1;
-        var limit = 3;
+        var page = parseInt(req.query.page) || 1;
+        var limit = 6;
         var skip = (page - 1) * limit;
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var opt, productList, products;
+            var opt, productList, products, isLast;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -110,11 +110,13 @@ function productRouter(app) {
                         return [4 /*yield*/, Models.ProductModel.find()];
                     case 2:
                         products = _a.sent();
+                        isLast = (page * limit) >= products.length;
                         res.json({
                             code: 0,
                             msg: 'success',
                             total: products.length,
-                            data: productList
+                            data: productList,
+                            isLast: isLast
                         });
                         return [2 /*return*/];
                 }
