@@ -1,6 +1,9 @@
 import * as Models from '../models';
 
 const ObjectId = require('mongodb').ObjectID;
+const OrderModel = Models.OrderModel;
+const UserModel = Models.CustomModel;
+const NotificationModel = Models.NotificationModel;
 
 function productRouter(app) {
     app.post('/api/saveProduct', (req, res) => {
@@ -112,7 +115,75 @@ function productRouter(app) {
                 data: productList
             })
         })();
-    })
+    });
+
+    app.get('/api/order/add', (req, res) => {
+        let body = {};
+        body['products'] = req.query.products;
+        body['sumPrice'] = req.query.sumPrice;
+        body['customer'] = req.query.customer;
+        body['sn'] = 'YK' + new Date().getTime();
+        (async () => {
+            await OrderModel.create(body);
+            res.json({code: 0, msg: 'success'});
+        })();
+    });
+
+    app.get('/api/order/list', (req, res) => {
+        let id = null;
+        let orders;
+
+        (async () => {
+            if (req.query.id != null) {
+                id = new ObjectId(req.query.id);
+                orders = await OrderModel.find({
+                    customer: id
+                }).sort({createdAt: -1}).exec();
+            } else {
+                orders = await OrderModel.find().sort({createdAt: -1}).exec();
+            }
+
+            res.json({
+                code: 0,
+                msg: 'success',
+                orders: orders,
+                total: orders.length
+            });
+        })();
+    });
+
+    app.get('/api/order/comfirmorder', (req, res) => {
+        let id = req.query.id;
+        (async () => {
+            let order: any = await OrderModel.findOne({
+                _id: new ObjectId(id)
+            }).exec();
+            // 更改为己发货状态
+            order.status = 1;
+            order.save();
+
+            let code = order.sumPrice;
+            let customer = order.customer;
+            let user: any = await UserModel.findOne({
+                _id: new ObjectId(customer)
+            }).exec();
+            // 更改用户积分
+            user.code += code;
+            user.save();
+
+            //发送通知
+            await NotificationModel.create({
+                content: '您的订单：' + order.sn + ' 己经发货，请注意查收！非常感谢您的订购，祝生活愉快！',
+                fromUser: customer, //后面改成管理员的Id
+                toUser: customer
+            });
+
+            res.json({
+                code: 0,
+                msg: 'success'
+            });
+        })();
+    });
 }
 
 export {productRouter}

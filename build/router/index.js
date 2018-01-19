@@ -37,6 +37,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Models = require("../models");
 var ObjectId = require('mongodb').ObjectID;
+var OrderModel = Models.OrderModel;
+var UserModel = Models.CustomModel;
+var NotificationModel = Models.NotificationModel;
 function productRouter(app) {
     var _this = this;
     app.post('/api/saveProduct', function (req, res) {
@@ -193,6 +196,97 @@ function productRouter(app) {
                             code: 0,
                             msg: 'done',
                             data: productList
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
+    app.get('/api/order/add', function (req, res) {
+        var body = {};
+        body['products'] = req.query.products;
+        body['sumPrice'] = req.query.sumPrice;
+        body['customer'] = req.query.customer;
+        body['sn'] = 'YK' + new Date().getTime();
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, OrderModel.create(body)];
+                    case 1:
+                        _a.sent();
+                        res.json({ code: 0, msg: 'success' });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
+    app.get('/api/order/list', function (req, res) {
+        var id = null;
+        var orders;
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!(req.query.id != null)) return [3 /*break*/, 2];
+                        id = new ObjectId(req.query.id);
+                        return [4 /*yield*/, OrderModel.find({
+                                customer: id
+                            }).sort({ createdAt: -1 }).exec()];
+                    case 1:
+                        orders = _a.sent();
+                        return [3 /*break*/, 4];
+                    case 2: return [4 /*yield*/, OrderModel.find().sort({ createdAt: -1 }).exec()];
+                    case 3:
+                        orders = _a.sent();
+                        _a.label = 4;
+                    case 4:
+                        res.json({
+                            code: 0,
+                            msg: 'success',
+                            orders: orders,
+                            total: orders.length
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
+    app.get('/api/order/comfirmorder', function (req, res) {
+        var id = req.query.id;
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            var order, code, customer, user;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, OrderModel.findOne({
+                            _id: new ObjectId(id)
+                        }).exec()];
+                    case 1:
+                        order = _a.sent();
+                        // 更改为己发货状态
+                        order.status = 1;
+                        order.save();
+                        code = order.sumPrice;
+                        customer = order.customer;
+                        return [4 /*yield*/, UserModel.findOne({
+                                _id: new ObjectId(customer)
+                            }).exec()];
+                    case 2:
+                        user = _a.sent();
+                        // 更改用户积分
+                        user.code += code;
+                        user.save();
+                        //发送通知
+                        return [4 /*yield*/, NotificationModel.create({
+                                content: '您的订单：' + order.sn + ' 己经发货，请注意查收！非常感谢您的订购，祝生活愉快！',
+                                fromUser: customer,
+                                toUser: customer
+                            })];
+                    case 3:
+                        //发送通知
+                        _a.sent();
+                        res.json({
+                            code: 0,
+                            msg: 'success'
                         });
                         return [2 /*return*/];
                 }
