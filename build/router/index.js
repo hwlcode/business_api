@@ -293,5 +293,98 @@ function productRouter(app) {
             });
         }); })();
     });
+    app.get('/api/notification', function (req, res) {
+        var userId = new ObjectId(req.query.id);
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            var list;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, NotificationModel.find({
+                            toUser: userId,
+                            status: 0
+                        }).sort({
+                            createdAt: -1
+                        }).exec()];
+                    case 1:
+                        list = _a.sent();
+                        res.json({
+                            code: 0,
+                            msg: 'success',
+                            data: list
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
+    app.get('/api/notification/unread', function (req, res) {
+        var userId = new ObjectId(req.query.id);
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            var list;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, NotificationModel.find({
+                            toUser: userId,
+                            status: 0,
+                            read: 0
+                        }).sort({
+                            createdAt: -1
+                        }).exec()];
+                    case 1:
+                        list = _a.sent();
+                        res.json({
+                            code: 0,
+                            msg: 'success',
+                            data: list
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
+    app.get('/api/notification/delete', function (req, res) {
+        var id = new ObjectId(req.query.id);
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            var item;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, NotificationModel.findOne({
+                            _id: id
+                        }).exec()];
+                    case 1:
+                        item = _a.sent();
+                        item.status = 1;
+                        item.save();
+                        res.json({
+                            code: 0,
+                            msg: 'success'
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
+    app.get('/api/notification/read', function (req, res) {
+        var id = new ObjectId(req.query.id);
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            var item;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, NotificationModel.findOne({
+                            _id: id
+                        }).exec()];
+                    case 1:
+                        item = _a.sent();
+                        item.read = 1;
+                        item.save();
+                        res.json({
+                            code: 0,
+                            msg: 'success'
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
 }
 exports.productRouter = productRouter;

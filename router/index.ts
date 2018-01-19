@@ -184,6 +184,77 @@ function productRouter(app) {
             });
         })();
     });
+
+    app.get('/api/notification', (req, res) => {
+        let userId = new ObjectId(req.query.id);
+        (async () => {
+            let list = await NotificationModel.find({
+                toUser: userId,
+                status: 0
+            }).sort({
+                createdAt: -1
+            }).exec();
+
+            res.json({
+                code: 0,
+                msg: 'success',
+                data: list
+            });
+        })();
+    });
+
+    app.get('/api/notification/unread', (req, res) => {
+        let userId = new ObjectId(req.query.id);
+        (async () => {
+            let list = await NotificationModel.find({
+                toUser: userId,
+                status: 0,
+                read: 0
+            }).sort({
+                createdAt: -1
+            }).exec();
+
+            res.json({
+                code: 0,
+                msg: 'success',
+                data: list
+            });
+        })();
+    });
+
+    app.get('/api/notification/delete', (req, res) => {
+        let id = new ObjectId(req.query.id);
+        (async () => {
+            let item: any = await NotificationModel.findOne({
+                _id: id
+            }).exec();
+
+            item.status = 1;
+            item.save();
+
+            res.json({
+                code: 0,
+                msg: 'success'
+            })
+        })();
+    });
+
+    app.get('/api/notification/read', (req, res) => {
+        let id = new ObjectId(req.query.id);
+        (async () => {
+            let item: any = await NotificationModel.findOne({
+                _id: id
+            }).exec();
+
+            item.read = 1;
+            item.save();
+
+            res.json({
+                code: 0,
+                msg: 'success'
+            })
+        })();
+    });
 }
 
 export {productRouter}
