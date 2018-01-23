@@ -132,22 +132,27 @@ function productRouter(app) {
     app.get('/api/order/list', (req, res) => {
         let id = null;
         let orders;
+        let page = req.query.q || 1;
+        let limit = 10;
+        let skip = (page - 1) * limit;
 
         (async () => {
             if (req.query.id != null) {
                 id = new ObjectId(req.query.id);
                 orders = await OrderModel.find({
                     customer: id
-                }).sort({createdAt: -1}).exec();
+                }).skip(skip).limit(limit).sort({createdAt: -1}).exec();
             } else {
-                orders = await OrderModel.find().sort({createdAt: -1}).exec();
+                orders = await OrderModel.find().skip(skip).limit(limit).sort({createdAt: -1}).exec();
             }
+
+            let allOrders = await OrderModel.find();
 
             res.json({
                 code: 0,
                 msg: 'success',
                 orders: orders,
-                total: orders.length
+                total: allOrders.length
             });
         })();
     });

@@ -223,7 +223,11 @@ function productRouter(app) {
     app.get('/api/order/list', function (req, res) {
         var id = null;
         var orders;
+        var page = req.query.q || 1;
+        var limit = 10;
+        var skip = (page - 1) * limit;
         (function () { return __awaiter(_this, void 0, void 0, function () {
+            var allOrders;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -231,20 +235,22 @@ function productRouter(app) {
                         id = new ObjectId(req.query.id);
                         return [4 /*yield*/, OrderModel.find({
                                 customer: id
-                            }).sort({ createdAt: -1 }).exec()];
+                            }).skip(skip).limit(limit).sort({ createdAt: -1 }).exec()];
                     case 1:
                         orders = _a.sent();
                         return [3 /*break*/, 4];
-                    case 2: return [4 /*yield*/, OrderModel.find().sort({ createdAt: -1 }).exec()];
+                    case 2: return [4 /*yield*/, OrderModel.find().skip(skip).limit(limit).sort({ createdAt: -1 }).exec()];
                     case 3:
                         orders = _a.sent();
                         _a.label = 4;
-                    case 4:
+                    case 4: return [4 /*yield*/, OrderModel.find()];
+                    case 5:
+                        allOrders = _a.sent();
                         res.json({
                             code: 0,
                             msg: 'success',
                             orders: orders,
-                            total: orders.length
+                            total: allOrders.length
                         });
                         return [2 /*return*/];
                 }
