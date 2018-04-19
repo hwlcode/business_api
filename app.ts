@@ -29,11 +29,11 @@ webApiRouter(app);
 
 if (process.env.NODE_ENV === 'production') {
     app.listen(8000, 'localhost', () => {
-        console.log('app is running at http://localhost:8000');
+        console.log('app is running at pro http://localhost:8000');
     });
 }else{
-    app.listen(8000, 'localhost', () => {
-        console.log('app is running at http://localhost:8000');
+    app.listen(9527, 'localhost', () => {
+        console.log('app is running at dev http://localhost:9527');
     });
 }
 
