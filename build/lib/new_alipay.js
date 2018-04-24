@@ -49,7 +49,7 @@ var NewAlipay = (function () {
         var params = this.ali.appPay({
             subject: opts.subject,
             body: opts.body,
-            outTradeId: outTradeId,
+            outTradeId: opts.outTradeId,
             timeout: '30m',
             amount: opts.amount,
             goodsType: '0'
@@ -138,24 +138,28 @@ var NewAlipay = (function () {
         var ok = this.ali.signVerify(response);
         return ok;
     };
+    /**
+     * 查询交易状态 https://doc.open.alipay.com/doc2/apiDetail.htm?spm=a219a.7629065.0.0.PlTwKb&apiId=757&docType=4
+     * @param {Object} opts
+     * @param {String} [opts.outTradeId]    订单支付时传入的商户订单号,和支付宝交易号不能同时为空。 tradeId,outTradeId如果同时存在优先取tradeId
+     * @param {String} [opts.tradeId]       支付宝交易号，和商户订单号不能同时为空
+     * @param {String} [opts.appAuthToken]  https://doc.open.alipay.com/doc2/detail.htm?treeId=216&articleId=105193&docType=1
+     */
+    NewAlipay.prototype.queryOrder = function (outTradeId, tradeId) {
+        var self = this;
+        this.ali.query({
+            outTradeId: outTradeId,
+            tradeId: tradeId
+        }).then(function (ret) {
+            //签名校验
+            // console.log(ret);
+            var ok = self.ali.signVerify(ret.json());
+            return ok;
+        });
+    };
     return NewAlipay;
 }());
 exports.NewAlipay = NewAlipay;
-/**
- * 查询交易状态 https://doc.open.alipay.com/doc2/apiDetail.htm?spm=a219a.7629065.0.0.PlTwKb&apiId=757&docType=4
- * @param {Object} opts
- * @param {String} [opts.outTradeId]    订单支付时传入的商户订单号,和支付宝交易号不能同时为空。 tradeId,outTradeId如果同时存在优先取tradeId
- * @param {String} [opts.tradeId]       支付宝交易号，和商户订单号不能同时为空
- * @param {String} [opts.appAuthToken]  https://doc.open.alipay.com/doc2/detail.htm?treeId=216&articleId=105193&docType=1
- */
-// ali.query({
-//     outTradeId: outTradeId
-// }).then(function (ret) {
-//     console.log("***** ret.body=" + ret.body);
-//
-//     //签名校验
-//     var ok = ali.signVerify(ret.json());
-// });
 /**
  * 统一收单交易关闭接口 https://doc.open.alipay.com/doc2/apiDetail.htm?spm=a219a.7629065.0.0.6VzMcn&apiId=1058&docType=4
  * @param {Object} opts

@@ -171,7 +171,7 @@ function loginRouter(app) {
     });
     app.get('/api/users', function (req, res) {
         var page = parseInt(req.query.q) || 1;
-        var limit = 3;
+        var limit = 10;
         var skip = (page - 1) * limit;
         (function () { return __awaiter(_this, void 0, void 0, function () {
             var opt, userList, users;

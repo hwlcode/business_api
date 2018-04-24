@@ -7,13 +7,26 @@ function alipayRouter(app) {
         var opts = {
             subject: req.query.subject,
             body: req.query.body,
-            amount: '0.01',
+            outTradeId: req.query.outTradeId,
+            amount: '0.01' // 过期时间 req.query.amount
         };
         var params = newAlipay.getAppParams(opts);
         res.json({
             code: 0,
             data: {
                 msg: params
+            }
+        });
+    });
+    app.get('/api/query_order', function (req, res) {
+        var outTradeId = req.query.sn + ''; // 订单号
+        var tradeId = req.query.trade_id + ''; // 支付宝交易号
+        var isPay = newAlipay.queryOrder(outTradeId, tradeId);
+        console.log(isPay);
+        res.json({
+            code: 0,
+            data: {
+                ok: isPay
             }
         });
     });

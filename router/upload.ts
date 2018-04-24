@@ -26,7 +26,7 @@ function uploaderRouter(app) {
                 path: file.path.split('public')[1],
                 size: file.size
             });
-            res.send({ret_code: '0', id: img._id});
+            res.send({ret_code: '0', id: img._id, path: img['path']});
         })();
     });
 }

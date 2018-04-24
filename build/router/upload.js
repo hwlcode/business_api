@@ -67,7 +67,7 @@ function uploaderRouter(app) {
                         })];
                     case 1:
                         img = _a.sent();
-                        res.send({ ret_code: '0', id: img._id });
+                        res.send({ ret_code: '0', id: img._id, path: img['path'] });
                         return [2 /*return*/];
                 }
             });

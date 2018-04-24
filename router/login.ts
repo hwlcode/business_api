@@ -118,7 +118,7 @@ function loginRouter(app) {
 
     app.get('/api/users', (req, res) => {
         let page = parseInt(req.query.q) || 1;
-        let limit = 3;
+        let limit = 10;
         let skip = (page - 1) * limit;
         (async () => {
             let opt = {

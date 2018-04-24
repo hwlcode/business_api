@@ -39,6 +39,7 @@ var Models = require("../models");
 var ObjectId = require('mongodb').ObjectID;
 var OrderModel = Models.OrderModel;
 var UserModel = Models.CustomModel;
+var ProductModel = Models.ProductModel;
 var NotificationModel = Models.NotificationModel;
 function productRouter(app) {
     var _this = this;
@@ -129,11 +130,15 @@ function productRouter(app) {
     app.get('/api/product/:id', function (req, res) {
         if (req.params.id != 0) {
             var id_1 = new ObjectId(req.params.id);
+            var opt_1 = {
+                path: 'banner',
+                select: 'path'
+            };
             (function () { return __awaiter(_this, void 0, void 0, function () {
                 var product;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, Models.ProductModel.findOne({ _id: id_1 }).exec()];
+                        case 0: return [4 /*yield*/, Models.ProductModel.findOne({ _id: id_1 }).populate(opt_1).exec()];
                         case 1:
                             product = _a.sent();
                             if (product !== null) {
@@ -159,7 +164,9 @@ function productRouter(app) {
                                 $set: {
                                     name: body.name,
                                     price: body.price,
-                                    banner: body.banner
+                                    banner: body.banner,
+                                    code: body.code,
+                                    desc: body.desc
                                 }
                             }).exec()];
                         case 1:
@@ -214,7 +221,7 @@ function productRouter(app) {
                     case 0: return [4 /*yield*/, OrderModel.create(body)];
                     case 1:
                         _a.sent();
-                        res.json({ code: 0, msg: 'success' });
+                        res.json({ code: 0, msg: 'success', data: { sn: body['sn'] } });
                         return [2 /*return*/];
                 }
             });
@@ -227,30 +234,36 @@ function productRouter(app) {
         var limit = 10;
         var skip = (page - 1) * limit;
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var allOrders;
+            var total, allOrders;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!(req.query.id != null)) return [3 /*break*/, 2];
+                        total = 0;
+                        if (!(req.query.id != null)) return [3 /*break*/, 3];
                         id = new ObjectId(req.query.id);
                         return [4 /*yield*/, OrderModel.find({
                                 customer: id
                             }).skip(skip).limit(limit).sort({ createdAt: -1 }).exec()];
                     case 1:
                         orders = _a.sent();
-                        return [3 /*break*/, 4];
-                    case 2: return [4 /*yield*/, OrderModel.find().skip(skip).limit(limit).sort({ createdAt: -1 }).exec()];
-                    case 3:
-                        orders = _a.sent();
-                        _a.label = 4;
-                    case 4: return [4 /*yield*/, OrderModel.find()];
-                    case 5:
+                        return [4 /*yield*/, OrderModel.find()];
+                    case 2:
                         allOrders = _a.sent();
+                        total = allOrders.length;
+                        return [3 /*break*/, 6];
+                    case 3: return [4 /*yield*/, OrderModel.find({}).skip(skip).limit(limit).sort({ status: -1 }).exec()];
+                    case 4:
+                        orders = _a.sent();
+                        return [4 /*yield*/, OrderModel.find().count()];
+                    case 5:
+                        total = _a.sent();
+                        _a.label = 6;
+                    case 6:
                         res.json({
                             code: 0,
                             msg: 'success',
                             orders: orders,
-                            total: allOrders.length
+                            total: total
                         });
                         return [2 /*return*/];
                 }
@@ -260,34 +273,57 @@ function productRouter(app) {
     app.get('/api/order/comfirmorder', function (req, res) {
         var id = req.query.id;
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var order, code, customer, user;
+            var order;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, OrderModel.findOne({
-                            _id: new ObjectId(id)
+                            sn: id
                         }).exec()];
                     case 1:
                         order = _a.sent();
                         // 更改为己发货状态
                         order.status = 1;
                         order.save();
-                        code = order.sumPrice;
-                        customer = order.customer;
-                        return [4 /*yield*/, UserModel.findOne({
-                                _id: new ObjectId(customer)
-                            }).exec()];
-                    case 2:
-                        user = _a.sent();
-                        // 更改用户积分
-                        user.code += code;
-                        user.save();
+                        // let code = order.sumPrice;
+                        // let customer = order.customer;
+                        // let user: any = await UserModel.findOne({
+                        //     _id: new ObjectId(customer)
+                        // }).exec();
+                        // // 更改用户积分
+                        // user.code += code;
+                        // user.save();
                         //发送通知
-                        return [4 /*yield*/, NotificationModel.create({
-                                content: '您的订单：' + order.sn + ' 己经发货，请注意查收！非常感谢您的订购，祝生活愉快！',
-                                fromUser: customer,
-                                toUser: customer
-                            })];
-                    case 3:
+                        // await NotificationModel.create({
+                        //     content: '您的订单：' + order.sn + ' 己经生成，我们会尽快为您发货！非常感谢您的订购，祝生活愉快！',
+                        //     fromUser: customer, //后面改成管理员的Id
+                        //     toUser: customer
+                        // });
+                        res.json({
+                            code: 0,
+                            msg: 'success'
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
+    // 发送通知
+    app.get('/api/notification/create', function (req, res) {
+        var content = req.query.content;
+        var fromUser = new ObjectId(req.query.from);
+        var toUser = new ObjectId(req.query.to);
+        console.log(fromUser, toUser);
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: 
+                    //发送通知
+                    return [4 /*yield*/, NotificationModel.create({
+                            content: content,
+                            fromUser: fromUser,
+                            toUser: toUser
+                        })];
+                    case 1:
                         //发送通知
                         _a.sent();
                         res.json({
@@ -299,6 +335,7 @@ function productRouter(app) {
             });
         }); })();
     });
+    // 通知列表
     app.get('/api/notification', function (req, res) {
         var userId = new ObjectId(req.query.id);
         (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -323,6 +360,7 @@ function productRouter(app) {
             });
         }); })();
     });
+    // 未读通知
     app.get('/api/notification/unread', function (req, res) {
         var userId = new ObjectId(req.query.id);
         (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -348,6 +386,7 @@ function productRouter(app) {
             });
         }); })();
     });
+    // 删除通知
     app.get('/api/notification/delete', function (req, res) {
         var id = new ObjectId(req.query.id);
         (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -370,6 +409,7 @@ function productRouter(app) {
             });
         }); })();
     });
+    // 阅读通知
     app.get('/api/notification/read', function (req, res) {
         var id = new ObjectId(req.query.id);
         (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -386,6 +426,61 @@ function productRouter(app) {
                         res.json({
                             code: 0,
                             msg: 'success'
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
+    app.get('/api/dashboard', function (req, res) {
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            var product_sun, order_sun, year, month, day, order_today, order_status_1, user_sun, user_today;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, ProductModel.find().count()];
+                    case 1:
+                        product_sun = _a.sent();
+                        return [4 /*yield*/, OrderModel.find().count()];
+                    case 2:
+                        order_sun = _a.sent();
+                        year = new Date().getFullYear();
+                        month = new Date().getMonth() + 1;
+                        day = new Date().getDate();
+                        console.log(year + '-' + month + '-' + day + ' 00:00:00');
+                        return [4 /*yield*/, OrderModel.find({
+                                createdAt: {
+                                    $gte: new Date(year + '-' + month + '-' + day + ' 00:00:00'),
+                                    $lt: new Date(year + '-' + month + '-' + day + ' 23:59:59')
+                                }
+                            }).count()];
+                    case 3:
+                        order_today = _a.sent();
+                        return [4 /*yield*/, OrderModel.find({
+                                status: 1
+                            }).count()];
+                    case 4:
+                        order_status_1 = _a.sent();
+                        return [4 /*yield*/, UserModel.find().count()];
+                    case 5:
+                        user_sun = _a.sent();
+                        return [4 /*yield*/, UserModel.find({
+                                createdAt: {
+                                    $gte: new Date(year + '-' + month + '-' + day + ' 00:00:00'),
+                                    $lt: new Date(year + '-' + month + '-' + day + ' 23:59:59')
+                                }
+                            }).count()];
+                    case 6:
+                        user_today = _a.sent();
+                        res.json({
+                            code: 0,
+                            data: {
+                                product_sun: product_sun,
+                                order_sun: order_sun,
+                                order_today: order_today,
+                                order_status_1: order_status_1,
+                                user_sun: user_sun,
+                                user_today: user_today
+                            }
                         });
                         return [2 /*return*/];
                 }

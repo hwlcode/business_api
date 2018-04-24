@@ -48,7 +48,7 @@ class NewAlipay {
         let params = this.ali.appPay({
             subject: opts.subject, // 标题
             body: opts.body, // 商品描述
-            outTradeId: outTradeId,
+            outTradeId: opts.outTradeId, // 订单号
             timeout: '30m',
             amount: opts.amount, // 总价格
             goodsType: '0'
@@ -144,6 +144,26 @@ class NewAlipay {
         return ok;
     }
 
+    /**
+     * 查询交易状态 https://doc.open.alipay.com/doc2/apiDetail.htm?spm=a219a.7629065.0.0.PlTwKb&apiId=757&docType=4
+     * @param {Object} opts
+     * @param {String} [opts.outTradeId]    订单支付时传入的商户订单号,和支付宝交易号不能同时为空。 tradeId,outTradeId如果同时存在优先取tradeId
+     * @param {String} [opts.tradeId]       支付宝交易号，和商户订单号不能同时为空
+     * @param {String} [opts.appAuthToken]  https://doc.open.alipay.com/doc2/detail.htm?treeId=216&articleId=105193&docType=1
+     */
+    queryOrder(outTradeId, tradeId){
+        let self = this;
+        this.ali.query({
+            outTradeId: outTradeId,
+            tradeId: tradeId
+        }).then(function (ret) {
+            //签名校验
+            // console.log(ret);
+            let ok = self.ali.signVerify(ret.json());
+            return ok;
+        });
+    }
+
 }
 
 export { NewAlipay }
@@ -152,21 +172,7 @@ export { NewAlipay }
 
 
 
-/**
- * 查询交易状态 https://doc.open.alipay.com/doc2/apiDetail.htm?spm=a219a.7629065.0.0.PlTwKb&apiId=757&docType=4
- * @param {Object} opts
- * @param {String} [opts.outTradeId]    订单支付时传入的商户订单号,和支付宝交易号不能同时为空。 tradeId,outTradeId如果同时存在优先取tradeId
- * @param {String} [opts.tradeId]       支付宝交易号，和商户订单号不能同时为空
- * @param {String} [opts.appAuthToken]  https://doc.open.alipay.com/doc2/detail.htm?treeId=216&articleId=105193&docType=1
- */
-// ali.query({
-//     outTradeId: outTradeId
-// }).then(function (ret) {
-//     console.log("***** ret.body=" + ret.body);
-//
-//     //签名校验
-//     var ok = ali.signVerify(ret.json());
-// });
+
 
 
 /**
