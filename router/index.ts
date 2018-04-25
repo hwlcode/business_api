@@ -169,6 +169,24 @@ function productRouter(app) {
         })();
     });
 
+    app.get('/api/order/:id', (req, res) => {
+        let id = new ObjectId(req.params.id);
+        let opt = {
+            path: 'customer'
+        };
+        (async () => {
+            let order = await OrderModel.find({
+                _id: id
+            }).populate(opt).exec();
+
+            res.json({
+                code: 0,
+                data: order
+            })
+        })();
+    });
+
+    // 更改为己付款
     app.get('/api/order/comfirmorder', (req, res) => {
         let id = req.query.id;
         (async () => {
@@ -194,6 +212,41 @@ function productRouter(app) {
             //     fromUser: customer, //后面改成管理员的Id
             //     toUser: customer
             // });
+
+            res.json({
+                code: 0,
+                msg: 'success'
+            });
+        })();
+    });
+
+    // 更改为己发货
+    app.get('/api/order/send/:id', (req, res) => {
+        let id = new ObjectId(req.params.id);
+
+        (async () => {
+            let order: any = await OrderModel.findOne({
+                _id: id
+            }).exec();
+            // 更改为己发货状态
+            order.status = 2;
+            order.save();
+
+            let code = order.sumPrice;
+            let customer = order.customer;
+            let user: any = await UserModel.findOne({
+                _id: new ObjectId(customer)
+            }).exec();
+            // 更改用户积分
+            user.code += code;
+            user.save();
+
+            //发送通知
+            await NotificationModel.create({
+                content: '您的订单：' + order.sn + ' 己发货，请注意查收！非常感谢您的订购，祝生活愉快！',
+                fromUser: customer, //后面改成管理员的Id
+                toUser: customer
+            });
 
             res.json({
                 code: 0,
@@ -308,7 +361,7 @@ function productRouter(app) {
             let year = new Date().getFullYear();
             let month = new Date().getMonth() + 1;
             let day = new Date().getDate();
-            console.log(year+'-'+month+'-'+day+' 00:00:00');
+
             let order_today = await  OrderModel.find({
                 createdAt: {
                     $gte: new Date(year+'-'+month+'-'+day+' 00:00:00'),

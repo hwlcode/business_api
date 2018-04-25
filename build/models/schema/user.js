@@ -11,7 +11,8 @@ var UserSchema = new Schema({
     address: { type: String, default: null },
     avatar: { type: Schema.Types.ObjectId, default: null, ref: 'Images' },
     orders: [{ type: Schema.Types.ObjectId, default: null, ref: 'Order' }],
-    code: { type: Number, default: 0 }
+    code: { type: Number, default: 0 },
+    is_admin: { type: Number, default: 0 }
 }, {
     timestamps: true
 });
