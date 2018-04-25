@@ -438,12 +438,14 @@ var AppComponent = /** @class */ (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__angular_common_http__ = __webpack_require__("./node_modules/.5.2.10@@angular/common/esm5/http.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__angular_platform_browser_animations__ = __webpack_require__("./node_modules/.5.2.10@@angular/platform-browser/esm5/animations.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__orders_order_detail_order_detail_component__ = __webpack_require__("./src/app/orders/order-detail/order-detail.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__angular_common__ = __webpack_require__("./node_modules/.5.2.10@@angular/common/esm5/common.js");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -506,7 +508,7 @@ var AppModule = /** @class */ (function () {
                 __WEBPACK_IMPORTED_MODULE_5__angular_router__["c" /* RouterModule */].forRoot(routes),
                 __WEBPACK_IMPORTED_MODULE_4_ng_zorro_antd__["a" /* NgZorroAntdModule */].forRoot()
             ],
-            providers: [],
+            providers: [{ provide: __WEBPACK_IMPORTED_MODULE_20__angular_common__["g" /* LocationStrategy */], useClass: __WEBPACK_IMPORTED_MODULE_20__angular_common__["d" /* HashLocationStrategy */] }],
             bootstrap: [__WEBPACK_IMPORTED_MODULE_3__app_component__["a" /* AppComponent */]]
         })
     ], AppModule);
@@ -1009,7 +1011,7 @@ var ProductFormComponent = /** @class */ (function () {
         this.getProduct(id).subscribe(function (res) {
             if (id != 0) {
                 self.isSave = false;
-                _this.avatarUrl = 'http://127.0.0.1:9527' + res.banner.path;
+                _this.avatarUrl = res.banner.path;
                 _this.avatarPath = res.banner._id;
             }
             _this.formModel.reset({
