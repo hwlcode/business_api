@@ -216,12 +216,13 @@ function productRouter(app) {
         body['customer'] = req.query.customer;
         body['sn'] = 'YK' + new Date().getTime();
         (function () { return __awaiter(_this, void 0, void 0, function () {
+            var order;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, OrderModel.create(body)];
                     case 1:
-                        _a.sent();
-                        res.json({ code: 0, msg: 'success', data: { sn: body['sn'] } });
+                        order = _a.sent();
+                        res.json({ code: 0, msg: 'success', data: { sn: order._id } });
                         return [2 /*return*/];
                 }
             });
@@ -294,19 +295,19 @@ function productRouter(app) {
         }); })();
     });
     // 更改为己付款
-    app.get('/api/order/comfirmorder', function (req, res) {
-        var id = req.query.id;
+    app.get('/api/order/confirm_order/:id', function (req, res) {
+        var id = req.params.id;
         (function () { return __awaiter(_this, void 0, void 0, function () {
             var order;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, OrderModel.findOne({
-                            sn: id
+                            _id: new ObjectId(id)
                         }).exec()];
                     case 1:
                         order = _a.sent();
                         // 更改为己发货状态
-                        order.status = 1;
+                        order['status'] = 1;
                         order.save();
                         // let code = order.sumPrice;
                         // let customer = order.customer;
@@ -335,7 +336,7 @@ function productRouter(app) {
     app.get('/api/order/send/:id', function (req, res) {
         var id = new ObjectId(req.params.id);
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var order, code, customer, user;
+            var order, code, customer, user, admin;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, OrderModel.findOne({
@@ -356,13 +357,18 @@ function productRouter(app) {
                         // 更改用户积分
                         user.code += code;
                         user.save();
+                        return [4 /*yield*/, UserModel.findOne({
+                                is_admin: 1
+                            }).exec()];
+                    case 3:
+                        admin = _a.sent();
                         //发送通知
                         return [4 /*yield*/, NotificationModel.create({
                                 content: '您的订单：' + order.sn + ' 己发货，请注意查收！非常感谢您的订购，祝生活愉快！',
-                                fromUser: customer,
+                                fromUser: admin._id,
                                 toUser: customer
                             })];
-                    case 3:
+                    case 4:
                         //发送通知
                         _a.sent();
                         res.json({
@@ -375,11 +381,11 @@ function productRouter(app) {
         }); })();
     });
     // 发送通知
-    app.get('/api/notification/create', function (req, res) {
-        var content = req.query.content;
-        var fromUser = new ObjectId(req.query.from);
-        var toUser = new ObjectId(req.query.to);
-        console.log(fromUser, toUser);
+    app.get('/api/notification/create/:content/:from/:to', function (req, res) {
+        var content = req.params.content;
+        var fromUser = new ObjectId(req.params.from);
+        var toUser = new ObjectId(req.params.to);
+        // console.log('content:' + content, 'fromUser: '+ fromUser, 'toUser:' + toUser);
         (function () { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {

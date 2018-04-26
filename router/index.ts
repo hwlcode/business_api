@@ -132,8 +132,8 @@ function productRouter(app) {
         body['customer'] = req.query.customer;
         body['sn'] = 'YK' + new Date().getTime();
         (async () => {
-            await OrderModel.create(body);
-            res.json({code: 0, msg: 'success', data: {sn: body['sn']}});
+            let order = await OrderModel.create(body);
+            res.json({code: 0, msg: 'success', data: {sn: order._id}});
         })();
     });
 
@@ -187,14 +187,14 @@ function productRouter(app) {
     });
 
     // 更改为己付款
-    app.get('/api/order/comfirmorder', (req, res) => {
-        let id = req.query.id;
+    app.get('/api/order/confirm_order/:id', (req, res) => {
+        let id = req.params.id;
         (async () => {
-            let order: any = await OrderModel.findOne({
-                sn: id
+            let order = await OrderModel.findOne({
+                _id: new ObjectId(id)
             }).exec();
             // 更改为己发货状态
-            order.status = 1;
+            order['status'] = 1;
             order.save();
 
             // let code = order.sumPrice;
@@ -241,10 +241,14 @@ function productRouter(app) {
             user.code += code;
             user.save();
 
+            let admin = await UserModel.findOne({
+                is_admin: 1
+            }).exec();
+
             //发送通知
             await NotificationModel.create({
                 content: '您的订单：' + order.sn + ' 己发货，请注意查收！非常感谢您的订购，祝生活愉快！',
-                fromUser: customer, //后面改成管理员的Id
+                fromUser: admin._id, //后面改成管理员的Id
                 toUser: customer
             });
 
@@ -256,12 +260,12 @@ function productRouter(app) {
     });
 
     // 发送通知
-    app.get('/api/notification/create', (req, res) => {
-        let content = req.query.content;
-        let fromUser = new ObjectId(req.query.from);
-        let toUser = new ObjectId(req.query.to);
+    app.get('/api/notification/create/:content/:from/:to', (req, res) => {
+        let content = req.params.content;
+        let fromUser = new ObjectId(req.params.from);
+        let toUser = new ObjectId(req.params.to);
 
-        console.log(fromUser, toUser);
+        // console.log('content:' + content, 'fromUser: '+ fromUser, 'toUser:' + toUser);
         (async () => {
             //发送通知
             await NotificationModel.create({
