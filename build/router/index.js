@@ -553,5 +553,25 @@ function productRouter(app) {
             });
         }); })();
     });
+    // 获取管理的id
+    app.get('/api/get_admin_id', function (req, res) {
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            var admin;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, UserModel.findOne({
+                            is_admin: 1
+                        }).exec()];
+                    case 1:
+                        admin = _a.sent();
+                        res.json({
+                            code: 0,
+                            data: admin
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
 }
 exports.productRouter = productRouter;

@@ -364,8 +364,8 @@ function productRouter(app) {
 
             let order_today = await  OrderModel.find({
                 createdAt: {
-                    $gte: new Date(year+'-'+month+'-'+day+' 00:00:00'),
-                    $lt: new Date(year+'-'+month+'-'+day+' 23:59:59')
+                    $gte: new Date(year + '-' + month + '-' + day + ' 00:00:00'),
+                    $lt: new Date(year + '-' + month + '-' + day + ' 23:59:59')
                 }
             }).count();
             let order_status_1 = await  OrderModel.find({
@@ -375,8 +375,8 @@ function productRouter(app) {
             let user_sun = await UserModel.find().count();
             let user_today = await UserModel.find({
                 createdAt: {
-                    $gte: new Date(year+'-'+month+'-'+day+' 00:00:00'),
-                    $lt: new Date(year+'-'+month+'-'+day+' 23:59:59')
+                    $gte: new Date(year + '-' + month + '-' + day + ' 00:00:00'),
+                    $lt: new Date(year + '-' + month + '-' + day + ' 23:59:59')
                 }
             }).count();
 
@@ -390,6 +390,20 @@ function productRouter(app) {
                     user_sun: user_sun,
                     user_today: user_today
                 }
+            })
+        })();
+    });
+
+    // 获取管理的id
+    app.get('/api/get_admin_id', (req, res) => {
+        (async () => {
+            let admin = await UserModel.findOne({
+                is_admin: 1
+            }).exec();
+
+            res.json({
+                code: 0,
+                data: admin
             })
         })();
     });
