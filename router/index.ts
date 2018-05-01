@@ -7,6 +7,7 @@ const ProductModel = Models.ProductModel;
 const NotificationModel = Models.NotificationModel;
 
 function productRouter(app) {
+    // 创建商品
     app.post('/api/saveProduct', (req, res) => {
         const body = req.body;
         (async () => {
@@ -14,7 +15,7 @@ function productRouter(app) {
             res.json({code: 0, msg: 'success'});
         })();
     });
-
+    // app商品列表
     app.get('/api/productList', (req, res) => {
         let page = parseInt(req.query.q) || 1;
         let limit = 10;
@@ -36,7 +37,7 @@ function productRouter(app) {
             });
         })();
     });
-
+    // 后台商品列表
     app.get('/api/products/list', (req, res) => {
         let keywords = req.query.keywords || '';
         let pattern = new RegExp(keywords, "i");
@@ -64,7 +65,7 @@ function productRouter(app) {
             });
         })();
     });
-
+    // 产品详情
     app.get('/api/product/:id', (req, res) => {
         if (req.params.id != 0) {
             let id = new ObjectId(req.params.id);
@@ -82,7 +83,7 @@ function productRouter(app) {
             res.json({});
         }
     });
-
+    // 更新产品
     app.post('/api/updateProduct/:id', (req, res) => {
         let id = new ObjectId(req.params.id);
         let body = req.body;
@@ -104,7 +105,7 @@ function productRouter(app) {
             res.json([]);
         }
     });
-
+    // 删除商品
     app.get('/api/delete/:id', (req, res) => {
         let id = new ObjectId(req.params.id);
         (async () => {
@@ -125,6 +126,8 @@ function productRouter(app) {
         })();
     });
 
+
+    // 添加订单
     app.get('/api/order/add', (req, res) => {
         let body = {};
         body['products'] = req.query.products;
@@ -133,10 +136,15 @@ function productRouter(app) {
         body['sn'] = 'YK' + new Date().getTime();
         (async () => {
             let order = await OrderModel.create(body);
-            res.json({code: 0, msg: 'success', data: {sn: order._id}});
+            res.json({
+                code: 0, msg: 'success', data: {
+                    sn: order._id,
+                    no: body['sn']
+                }
+            });
         })();
     });
-
+    // 订单列表
     app.get('/api/order/list', (req, res) => {
         let id = null;
         let orders;
@@ -168,7 +176,7 @@ function productRouter(app) {
             });
         })();
     });
-
+    // 订单详情
     app.get('/api/order/:id', (req, res) => {
         let id = new ObjectId(req.params.id);
         let opt = {
@@ -185,6 +193,7 @@ function productRouter(app) {
             })
         })();
     });
+
 
     // 更改为己付款
     app.get('/api/order/confirm_order/:id', (req, res) => {
@@ -219,7 +228,6 @@ function productRouter(app) {
             });
         })();
     });
-
     // 更改为己发货
     app.get('/api/order/send/:id', (req, res) => {
         let id = new ObjectId(req.params.id);
@@ -232,14 +240,23 @@ function productRouter(app) {
             order.status = 2;
             order.save();
 
-            let code = order.sumPrice;
+            console.log(order);
             let customer = order.customer;
             let user: any = await UserModel.findOne({
                 _id: new ObjectId(customer)
             }).exec();
-            // 更改用户积分
-            user.code += code;
-            user.save();
+            if (order.type == 0) {
+                let code = order.sumPrice;
+                // 更改用户积分
+                user.code += code;
+                user.save();
+            } else if (order.type == 1) {
+                let product = JSON.parse(order.products);
+                let code = product[0].price * product[0].orderNum;
+                // 更改用户积分
+                user.code -= code;
+                user.save();
+            }
 
             let admin = await UserModel.findOne({
                 is_admin: 1
@@ -280,7 +297,6 @@ function productRouter(app) {
             });
         })();
     });
-
     // 通知列表
     app.get('/api/notification', (req, res) => {
         let userId = new ObjectId(req.query.id);
@@ -299,7 +315,6 @@ function productRouter(app) {
             });
         })();
     });
-
     // 未读通知
     app.get('/api/notification/unread', (req, res) => {
         let userId = new ObjectId(req.query.id);
@@ -319,7 +334,6 @@ function productRouter(app) {
             });
         })();
     });
-
     // 删除通知
     app.get('/api/notification/delete', (req, res) => {
         let id = new ObjectId(req.query.id);
@@ -337,7 +351,6 @@ function productRouter(app) {
             })
         })();
     });
-
     // 阅读通知
     app.get('/api/notification/read', (req, res) => {
         let id = new ObjectId(req.query.id);
@@ -356,6 +369,7 @@ function productRouter(app) {
         })();
     });
 
+    // 后台首页
     app.get('/api/dashboard', (req, res) => {
         (async () => {
             let product_sun = await ProductModel.find().count();
@@ -408,6 +422,41 @@ function productRouter(app) {
             res.json({
                 code: 0,
                 data: admin
+            })
+        })();
+    });
+
+    // 积分兑换订单
+    app.post('/api/update_code', (req, res) => {
+        let id = req.body.id;
+        let product = req.body.product;
+
+        (async () => {
+            // 创建订单
+            let body = {};
+            body['products'] = '[' + JSON.stringify(product) + ']';
+            body['sumPrice'] = 0;
+            body['customer'] = id;
+            body['sn'] = 'YK' + new Date().getTime();
+            body['type'] = 1;
+
+            await OrderModel.create(body);
+
+            // 发送通知
+            let admin = await UserModel.findOne({
+                is_admin: 1
+            }).exec();
+
+            //发送通知
+            await NotificationModel.create({
+                content: '我们己经收到您的订单：' + body['sn'] + ' 非常感谢您的订购，我们会尽快为您处理，祝生活愉快！',
+                fromUser: admin._id, //后面改成管理员的Id
+                toUser: id
+            });
+
+            res.json({
+                code: 0,
+                msg: 'success'
             })
         })();
     });

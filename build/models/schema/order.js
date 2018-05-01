@@ -7,7 +7,8 @@ var OrderSchema = new Schema({
     products: { type: String },
     sumPrice: { type: Number, default: 0 },
     status: { type: Number, default: 0 },
-    customer: { type: Schema.Types.ObjectId, ref: 'User' }
+    customer: { type: Schema.Types.ObjectId, ref: 'User' },
+    type: { type: Number, default: 0 }
 }, {
     timestamps: true
 });

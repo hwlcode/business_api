@@ -43,6 +43,7 @@ var ProductModel = Models.ProductModel;
 var NotificationModel = Models.NotificationModel;
 function productRouter(app) {
     var _this = this;
+    // 创建商品
     app.post('/api/saveProduct', function (req, res) {
         var body = req.body;
         (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -57,6 +58,7 @@ function productRouter(app) {
             });
         }); })();
     });
+    // app商品列表
     app.get('/api/productList', function (req, res) {
         var page = parseInt(req.query.q) || 1;
         var limit = 10;
@@ -89,6 +91,7 @@ function productRouter(app) {
             });
         }); })();
     });
+    // 后台商品列表
     app.get('/api/products/list', function (req, res) {
         var keywords = req.query.keywords || '';
         var pattern = new RegExp(keywords, "i");
@@ -127,6 +130,7 @@ function productRouter(app) {
             });
         }); })();
     });
+    // 产品详情
     app.get('/api/product/:id', function (req, res) {
         if (req.params.id != 0) {
             var id_1 = new ObjectId(req.params.id);
@@ -153,6 +157,7 @@ function productRouter(app) {
             res.json({});
         }
     });
+    // 更新产品
     app.post('/api/updateProduct/:id', function (req, res) {
         var id = new ObjectId(req.params.id);
         var body = req.body;
@@ -181,6 +186,7 @@ function productRouter(app) {
             res.json([]);
         }
     });
+    // 删除商品
     app.get('/api/delete/:id', function (req, res) {
         var id = new ObjectId(req.params.id);
         (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -209,6 +215,7 @@ function productRouter(app) {
             });
         }); })();
     });
+    // 添加订单
     app.get('/api/order/add', function (req, res) {
         var body = {};
         body['products'] = req.query.products;
@@ -222,12 +229,18 @@ function productRouter(app) {
                     case 0: return [4 /*yield*/, OrderModel.create(body)];
                     case 1:
                         order = _a.sent();
-                        res.json({ code: 0, msg: 'success', data: { sn: order._id } });
+                        res.json({
+                            code: 0, msg: 'success', data: {
+                                sn: order._id,
+                                no: body['sn']
+                            }
+                        });
                         return [2 /*return*/];
                 }
             });
         }); })();
     });
+    // 订单列表
     app.get('/api/order/list', function (req, res) {
         var id = null;
         var orders;
@@ -271,6 +284,7 @@ function productRouter(app) {
             });
         }); })();
     });
+    // 订单详情
     app.get('/api/order/:id', function (req, res) {
         var id = new ObjectId(req.params.id);
         var opt = {
@@ -336,7 +350,7 @@ function productRouter(app) {
     app.get('/api/order/send/:id', function (req, res) {
         var id = new ObjectId(req.params.id);
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var order, code, customer, user, admin;
+            var order, customer, user, code, product, code, admin;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, OrderModel.findOne({
@@ -347,16 +361,26 @@ function productRouter(app) {
                         // 更改为己发货状态
                         order.status = 2;
                         order.save();
-                        code = order.sumPrice;
+                        console.log(order);
                         customer = order.customer;
                         return [4 /*yield*/, UserModel.findOne({
                                 _id: new ObjectId(customer)
                             }).exec()];
                     case 2:
                         user = _a.sent();
-                        // 更改用户积分
-                        user.code += code;
-                        user.save();
+                        if (order.type == 0) {
+                            code = order.sumPrice;
+                            // 更改用户积分
+                            user.code += code;
+                            user.save();
+                        }
+                        else if (order.type == 1) {
+                            product = JSON.parse(order.products);
+                            code = product[0].price * product[0].orderNum;
+                            // 更改用户积分
+                            user.code -= code;
+                            user.save();
+                        }
                         return [4 /*yield*/, UserModel.findOne({
                                 is_admin: 1
                             }).exec()];
@@ -505,6 +529,7 @@ function productRouter(app) {
             });
         }); })();
     });
+    // 后台首页
     app.get('/api/dashboard', function (req, res) {
         (function () { return __awaiter(_this, void 0, void 0, function () {
             var product_sun, order_sun, year, month, day, order_today, order_status_1, user_sun, user_today;
@@ -573,6 +598,47 @@ function productRouter(app) {
                         res.json({
                             code: 0,
                             data: admin
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
+    // 积分兑换订单
+    app.post('/api/update_code', function (req, res) {
+        var id = req.body.id;
+        var product = req.body.product;
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            var body, admin;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        body = {};
+                        body['products'] = '[' + JSON.stringify(product) + ']';
+                        body['sumPrice'] = 0;
+                        body['customer'] = id;
+                        body['sn'] = 'YK' + new Date().getTime();
+                        body['type'] = 1;
+                        return [4 /*yield*/, OrderModel.create(body)];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, UserModel.findOne({
+                                is_admin: 1
+                            }).exec()];
+                    case 2:
+                        admin = _a.sent();
+                        //发送通知
+                        return [4 /*yield*/, NotificationModel.create({
+                                content: '我们己经收到您的订单：' + body['sn'] + ' 非常感谢您的订购，我们会尽快为您处理，祝生活愉快！',
+                                fromUser: admin._id,
+                                toUser: id
+                            })];
+                    case 3:
+                        //发送通知
+                        _a.sent();
+                        res.json({
+                            code: 0,
+                            msg: 'success'
                         });
                         return [2 /*return*/];
                 }
