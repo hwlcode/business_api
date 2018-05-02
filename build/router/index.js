@@ -265,7 +265,7 @@ function productRouter(app) {
                         allOrders = _a.sent();
                         total = allOrders.length;
                         return [3 /*break*/, 6];
-                    case 3: return [4 /*yield*/, OrderModel.find({}).skip(skip).limit(limit).sort({ status: -1 }).exec()];
+                    case 3: return [4 /*yield*/, OrderModel.find({}).skip(skip).limit(limit).sort({ status: -1, createdAt: -1 }).exec()];
                     case 4:
                         orders = _a.sent();
                         return [4 /*yield*/, OrderModel.find().count()];
@@ -361,7 +361,6 @@ function productRouter(app) {
                         // 更改为己发货状态
                         order.status = 2;
                         order.save();
-                        console.log(order);
                         customer = order.customer;
                         return [4 /*yield*/, UserModel.findOne({
                                 _id: new ObjectId(customer)
@@ -609,7 +608,7 @@ function productRouter(app) {
         var id = req.body.id;
         var product = req.body.product;
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var body, admin;
+            var body, order, admin;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -621,7 +620,7 @@ function productRouter(app) {
                         body['type'] = 1;
                         return [4 /*yield*/, OrderModel.create(body)];
                     case 1:
-                        _a.sent();
+                        order = _a.sent();
                         return [4 /*yield*/, UserModel.findOne({
                                 is_admin: 1
                             }).exec()];
@@ -638,7 +637,8 @@ function productRouter(app) {
                         _a.sent();
                         res.json({
                             code: 0,
-                            msg: 'success'
+                            msg: 'success',
+                            data: order
                         });
                         return [2 /*return*/];
                 }

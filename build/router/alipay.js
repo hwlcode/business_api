@@ -22,7 +22,7 @@ function alipayRouter(app) {
         var outTradeId = req.query.sn + ''; // 订单号
         var tradeId = req.query.trade_id + ''; // 支付宝交易号
         var isPay = newAlipay.queryOrder(outTradeId, tradeId);
-        console.log(isPay);
+        // console.log(isPay);
         res.json({
             code: 0,
             data: {

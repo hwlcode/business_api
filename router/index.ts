@@ -164,7 +164,7 @@ function productRouter(app) {
             } else {
                 orders = await OrderModel.find({
                     // status: {$gte: 1}
-                }).skip(skip).limit(limit).sort({status: -1}).exec();
+                }).skip(skip).limit(limit).sort({status: -1, createdAt: -1}).exec();
                 total = await OrderModel.find().count();
             }
 
@@ -240,7 +240,6 @@ function productRouter(app) {
             order.status = 2;
             order.save();
 
-            console.log(order);
             let customer = order.customer;
             let user: any = await UserModel.findOne({
                 _id: new ObjectId(customer)
@@ -440,7 +439,7 @@ function productRouter(app) {
             body['sn'] = 'YK' + new Date().getTime();
             body['type'] = 1;
 
-            await OrderModel.create(body);
+            let order = await OrderModel.create(body);
 
             // 发送通知
             let admin = await UserModel.findOne({
@@ -456,7 +455,8 @@ function productRouter(app) {
 
             res.json({
                 code: 0,
-                msg: 'success'
+                msg: 'success',
+                data: order
             })
         })();
     });

@@ -758,14 +758,14 @@ var LoginComponent = /** @class */ (function () {
 /***/ "./src/app/orders/order-detail/order-detail.component.css":
 /***/ (function(module, exports) {
 
-module.exports = ".table-title{\n    margin-bottom: 15px;\n}\n.my-card{\n    margin-bottom: 15px;\n}\n.btn-box{\n    text-align: center;\n}\n.sum{\n    text-align: right;\n    font-size: 20px;\n    font-weight: bold;\n    border-top: 1px #f2f2f2 solid;\n    padding: 15px 0;\n}\n"
+module.exports = ".table-title{\n    margin-bottom: 15px;\n}\n.my-card{\n    margin-bottom: 15px;\n}\n.btn-box{\n    text-align: center;\n}\n.sum{\n    text-align: right;\n    font-size: 20px;\n    font-weight: bold;\n    border-top: 1px #f2f2f2 solid;\n    padding: 15px 0;\n}\n.hidden{\n    display: none;\n}\n"
 
 /***/ }),
 
 /***/ "./src/app/orders/order-detail/order-detail.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<nz-content style=\"padding:0 50px;\">\n    <nz-breadcrumb style=\"margin:12px 0;\">\n        <nz-breadcrumb-item><a routerLink=\"/admin/dashboard\">首页</a></nz-breadcrumb-item>\n        <nz-breadcrumb-item><a routerLink=\"/admin/orders\">订单管理</a></nz-breadcrumb-item>\n        <nz-breadcrumb-item>订单详情</nz-breadcrumb-item>\n    </nz-breadcrumb>\n    <div style=\"background:#fff; padding: 24px; min-height: 280px;\">\n        <h2 class=\"table-title\">订单详情</h2>\n        <nz-card class=\"my-card\">\n            <ng-template #title>\n                收货地址\n            </ng-template>\n            <ng-template #body>\n                <p>地址：{{address}}</p>\n                <p>联系人：{{name}}</p>\n                <p>手机：{{phone}}</p>\n            </ng-template>\n        </nz-card>\n        <nz-card class=\"my-card\">\n            <ng-template #title>\n                订单{{sn}}\n            </ng-template>\n            <ng-template #body>\n                <div nz-row [nzGutter]=\"8\" *ngFor=\"let product of orders\">\n                    <div nz-col class=\"gutter-row\" [nzSpan]=\"2\">\n                        <img src=\"{{product.image}}\" alt=\"\" width=\"80\" height=\"80\">\n                    </div>\n                    <div nz-col class=\"gutter-row\" [nzSpan]=\"18\">\n                        {{product.name}}\n                    </div>\n                    <div nz-col class=\"gutter-row\" [nzSpan]=\"2\">\n                        <p style=\"text-align: right\">x{{product.orderNum}}</p>\n                    </div>\n                    <div nz-col class=\"gutter-row\" [nzSpan]=\"2\">\n                        <p style=\"text-align: right\">{{product.price * product.orderNum}}元</p>\n                    </div>\n                </div>\n                <p class=\"sum\">{{sum}}元</p>\n            </ng-template>\n        </nz-card>\n        <div class=\"btn-box\">\n            <button nz-button [nzType]=\"'default'\" (click)=\"cannel()\">\n                <span>取消</span>\n            </button>\n            <button nz-button [nzType]=\"'primary'\" (click)=\"showModal()\">\n                <span>确认发货</span>\n            </button>\n        </div>\n    </div>\n</nz-content>\n\n<nz-modal [nzVisible]=\"isVisible\" [nzTitle]=\"'确认收货'\" [nzContent]=\"modalContent\" (nzOnCancel)=\"handleCancel($event)\" (nzOnOk)=\"handleOk($event)\">\n    <ng-template #modalContent>\n        <p>确认后，客户将收到发货通知，请先确认收款到帐号，及客户收货地址无误后再操作！</p>\n    </ng-template>\n</nz-modal>\n"
+module.exports = "<nz-content style=\"padding:0 50px;\">\n    <nz-breadcrumb style=\"margin:12px 0;\">\n        <nz-breadcrumb-item><a routerLink=\"/admin/dashboard\">首页</a></nz-breadcrumb-item>\n        <nz-breadcrumb-item><a routerLink=\"/admin/orders\">订单管理</a></nz-breadcrumb-item>\n        <nz-breadcrumb-item>订单详情</nz-breadcrumb-item>\n    </nz-breadcrumb>\n    <div style=\"background:#fff; padding: 24px; min-height: 280px;\">\n        <h2 class=\"table-title\">订单详情\n        <span style=\"float: right; color: orangered;\">{{hide ? '积分兑换订单' : '普通订单'}}</span>\n        </h2>\n        <nz-card class=\"my-card\">\n            <ng-template #title>\n                收货地址\n            </ng-template>\n            <ng-template #body>\n                <p>地址：{{address}}</p>\n                <p>联系人：{{name}}</p>\n                <p>手机：{{phone}}</p>\n            </ng-template>\n        </nz-card>\n        <nz-card class=\"my-card\">\n            <ng-template #title>\n                订单{{sn}}\n            </ng-template>\n            <ng-template #body>\n                <div nz-row [nzGutter]=\"8\" *ngFor=\"let product of orders\">\n                    <div nz-col class=\"gutter-row\" [nzSpan]=\"2\">\n                        <img src=\"{{product.image}}\" alt=\"\" width=\"80\" height=\"80\">\n                    </div>\n                    <div nz-col class=\"gutter-row\" [nzSpan]=\"18\">\n                        {{product.name}}\n                    </div>\n                    <div nz-col class=\"gutter-row\" [nzSpan]=\"2\">\n                        <p style=\"text-align: right\">x{{product.orderNum}}</p>\n                    </div>\n                    <div nz-col class=\"gutter-row\" [nzSpan]=\"2\">\n                        <p style=\"text-align: right\">{{product.price * product.orderNum}}元</p>\n                    </div>\n                </div>\n                <p class=\"sum\">{{sum}}元</p>\n            </ng-template>\n        </nz-card>\n        <div class=\"btn-box\">\n            <button nz-button [nzType]=\"'default'\" (click)=\"cannel()\">\n                <span>取消</span>\n            </button>\n            <button nz-button [nzType]=\"'primary'\" (click)=\"showModal()\">\n                <span>确认发货</span>\n            </button>\n        </div>\n    </div>\n</nz-content>\n\n<nz-modal [nzVisible]=\"isVisible\" [nzTitle]=\"'确认收货'\" [nzContent]=\"modalContent\" (nzOnCancel)=\"handleCancel($event)\" (nzOnOk)=\"handleOk($event)\">\n    <ng-template #modalContent>\n        <p>确认后，客户将收到发货通知，请先确认收款到帐号，及客户收货地址无误后再操作！</p>\n    </ng-template>\n</nz-modal>\n"
 
 /***/ }),
 
@@ -795,6 +795,7 @@ var OrderDetailComponent = /** @class */ (function () {
         this.http = http;
         this.router = router;
         this.routeInfo = routeInfo;
+        this.hide = false;
         this.isVisible = false;
         this.showModal = function () {
             _this.isVisible = true;
@@ -802,7 +803,7 @@ var OrderDetailComponent = /** @class */ (function () {
         this.handleOk = function (e) {
             _this.http.get('/api/order/send/' + _this.id).map(function (res) { return res.json(); }).subscribe(function (data) {
                 if (data.code === 0) {
-                    _this.router.navigateByUrl('/admin/orders');
+                    _this.router.navigate(['/admin/orders']);
                 }
             });
             _this.isVisible = false;
@@ -823,11 +824,12 @@ var OrderDetailComponent = /** @class */ (function () {
                 _this.phone = _this.customer.phone;
                 _this.sn = res.data[0].sn;
                 _this.sum = res.data[0].sumPrice;
+                _this.hide = res.data[0].type > 0 ? true : false;
             }
         });
     };
     OrderDetailComponent.prototype.cannel = function () {
-        this.router.navigateByUrl('/admin/orders');
+        this.router.navigate(['/admin/orders']);
     };
     OrderDetailComponent.prototype.getOrderMsg = function () {
         return this.http.get('/api/order/' + this.id).map(function (res) { return res.json(); });
@@ -859,7 +861,7 @@ module.exports = ".table-title{\n    margin-bottom: 15px;\n}\n"
 /***/ "./src/app/orders/order-list/order-list.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<nz-content style=\"padding:0 50px;\">\n    <nz-breadcrumb style=\"margin:12px 0;\">\n        <nz-breadcrumb-item><a routerLink=\"/admin/dashboard\">首页</a></nz-breadcrumb-item>\n        <nz-breadcrumb-item>订单管理</nz-breadcrumb-item>\n    </nz-breadcrumb>\n    <div style=\"background:#fff; padding: 24px; min-height: 280px;\">\n        <h2 class=\"table-title\">订单管理</h2>\n        <nz-table #nzTable [nzAjaxData]=\"orderList\"\n                  [nzTotal]=\"nzTotal\"\n                  [(nzPageIndex)]=\"nzPageIndex\"\n                  (nzPageIndexChange)=\"pageChange($even)\"\n                  [nzPageSize]=\"10\"\n                  (nzPageSizeChange)=\"pageChange($even)\"\n        >\n            <thead nz-thead>\n            <tr>\n                <th nz-th><span>订单号</span></th>\n                <th nz-th><span>总价</span></th>\n                <th nz-th><span>状态</span></th>\n                <th nz-th width=\"50\"><span>操作</span></th>\n            </tr>\n            </thead>\n            <tbody nz-tbody>\n            <tr nz-tbody-tr *ngFor=\"let order of orderList\">\n                <td nz-td>{{order.sn}}</td>\n                <td nz-td>￥{{order.sumPrice}}元</td>\n                <td nz-td>{{ order.status == 1 ? '己付款,等待发货' : '己发货'}}</td>\n                <td nz-td>\n                    <button nz-button [nzType]=\"'primary'\" [nzSize]=\"'small'\" *ngIf=\"order.status == 1\"\n                            (click)=\"open(order._id)\"><span>发货</span></button>\n                </td>\n            </tr>\n            </tbody>\n        </nz-table>\n    </div>\n</nz-content>\n"
+module.exports = "<nz-content style=\"padding:0 50px;\">\n    <nz-breadcrumb style=\"margin:12px 0;\">\n        <nz-breadcrumb-item><a routerLink=\"/admin/dashboard\">首页</a></nz-breadcrumb-item>\n        <nz-breadcrumb-item>订单管理</nz-breadcrumb-item>\n    </nz-breadcrumb>\n    <div style=\"background:#fff; padding: 24px; min-height: 280px;\">\n        <h2 class=\"table-title\">订单管理</h2>\n        <nz-table #nzTable [nzAjaxData]=\"orderList\"\n                  [nzTotal]=\"nzTotal\"\n                  [(nzPageIndex)]=\"nzPageIndex\"\n                  (nzPageIndexChange)=\"pageChange($even)\"\n                  [nzPageSize]=\"10\"\n                  (nzPageSizeChange)=\"pageChange($even)\"\n        >\n            <thead nz-thead>\n            <tr>\n                <th nz-th><span>订单号</span></th>\n                <th nz-th><span>类型</span></th>\n                <th nz-th><span>总价</span></th>\n                <th nz-th><span>状态</span></th>\n                <th nz-th width=\"50\"><span>操作</span></th>\n            </tr>\n            </thead>\n            <tbody nz-tbody>\n            <tr nz-tbody-tr *ngFor=\"let order of orderList\">\n                <td nz-td>{{order.sn}}</td>\n                <td nz-td>{{order.type == 0 ? '普通订单':'积分兑换订单'}}</td>\n                <td nz-td>￥{{order.sumPrice}}元</td>\n                <td nz-td>{{ order.status <= 1 ? '己付款,等待发货' : '己发货'}}</td>\n                <td nz-td>\n                    <button nz-button [nzType]=\"'primary'\" [nzSize]=\"'small'\" *ngIf=\"order.status <= 1\"\n                            (click)=\"open(order._id)\"><span>发货</span></button>\n                </td>\n            </tr>\n            </tbody>\n        </nz-table>\n    </div>\n</nz-content>\n"
 
 /***/ }),
 
