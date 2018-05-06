@@ -156,6 +156,7 @@ console.log(verifyCode);
         //初始化sms_client
         let smsClient = new SMSClient({accessKeyId, secretAccessKey});
         //发送短信
+        console.log(phone);
         smsClient.sendSMS({
             PhoneNumbers: phone,                     // 接收号码
             SignName: '广西盈垦',                            // 签名

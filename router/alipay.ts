@@ -8,7 +8,7 @@ function alipayRouter(app) {
             subject: req.query.subject, // 标题
             body: req.query.body, // 商品描述
             outTradeId: req.query.outTradeId, // 订单号
-            amount: '0.01' // 过期时间 req.query.amount
+            amount: req.query.amount // 金额 req.query.amount
         }
 
         let params = newAlipay.getAppParams(opts);

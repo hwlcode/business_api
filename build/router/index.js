@@ -267,7 +267,7 @@ function productRouter(app) {
                         allOrders = _a.sent();
                         total = allOrders.length;
                         return [3 /*break*/, 6];
-                    case 3: return [4 /*yield*/, OrderModel.find({}).skip(skip).limit(limit).sort({ status: -1, createdAt: -1 }).exec()];
+                    case 3: return [4 /*yield*/, OrderModel.find({}).skip(skip).limit(limit).sort({ createdAt: -1, status: -1 }).exec()];
                     case 4:
                         orders = _a.sent();
                         return [4 /*yield*/, OrderModel.find().count()];
@@ -617,6 +617,7 @@ function productRouter(app) {
                         }).exec()];
                     case 1:
                         admin = _a.sent();
+                        console.log(admin);
                         res.json({
                             code: 0,
                             data: admin
