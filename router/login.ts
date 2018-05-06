@@ -1,5 +1,6 @@
 import * as SMSClient from '@alicloud/sms-sdk'
 import * as Models from '../models';
+import { accessKeyId, secretAccessKey } from '../common/conf';
 
 const ObjectId = require('mongodb').ObjectID;
 const md5 = require("blueimp-md5");
@@ -20,41 +21,41 @@ function MathRand(n) {
 function loginRouter(app) {
     app.get('/api/verifyCode', (req, res) => {
         const PhoneNumbers = req.query.phone;
-        verifyCode = MathRand(6);
-        if(verifyCode.length < 6){
-            verifyCode = verifyCode + '0';
+        let msgCode = MathRand(6);
+        if(msgCode.length < 6){
+            msgCode = msgCode + '0';
         }
 
-        const accessKeyId = 'LTAI4nllpXNPtH1z'
-        const secretAccessKey = 'K3r32rZC2zBXVZneOrjrcuZQOd2Ocs'
         //初始化sms_client
         let smsClient = new SMSClient({accessKeyId, secretAccessKey})
         //发送短信
         smsClient.sendSMS({
-            PhoneNumbers: PhoneNumbers,             // 接收号码
-            SignName: '广西盈垦',                    // 签名
-            TemplateCode: 'SMS_106955018',          //短信模板
-            TemplateParam: '{"code":' + verifyCode + ',"product":"广西盈垦"}' //短信模板的数据
-        }).then(function (res) {
-            let {Code} = res
+            PhoneNumbers: PhoneNumbers,                     // 接收号码
+            SignName: '广西盈垦',                            // 签名
+            TemplateCode: 'SMS_133974635',                  //短信模板
+            TemplateParam: '{"code":' + msgCode + '}'    //短信模板的数据
+        }).then(function (data) {
+            let Code = data['Code'];
             if (Code === 'OK') {
                 //处理返回参数
-                res.json(res);
+                verifyCode = msgCode;
+                res.send(data);
             }
         }, function (err) {
             if (err) {
-                res.json({code: 1, msg: '请求次数太频繁，请5分钟后再试！'});
+                console.log(err);
+                res.json({code: 1, msg: '短信发送太频敏繁，请稍后再试'});
             }
         })
     });
 
     app.post('/api/user/login', (req, res) => {
         const body = req.body;
-        let password = md5('111111');
-
+        // let password = md5('111111');
+console.log(verifyCode);
         (async () => {
-            if (body.phoneCode == password) {
-            // if (body.phoneCode == verifyCode) {
+            // if (body.phoneCode == password) {
+            if (body.phoneCode == verifyCode) {
                 let user = await (Models.CustomModel as any).findOrCreate({
                     phone: body.phone
                 });
@@ -146,7 +147,32 @@ function loginRouter(app) {
                 data: userList
             });
         })();
-    })
+    });
+
+    app.get('/api/msg_to_business', (req, res) => {
+        const phone = req.query.phone;
+        const no = req.query.no;
+
+        //初始化sms_client
+        let smsClient = new SMSClient({accessKeyId, secretAccessKey});
+        //发送短信
+        smsClient.sendSMS({
+            PhoneNumbers: phone,                     // 接收号码
+            SignName: '广西盈垦',                            // 签名
+            TemplateCode: 'SMS_133964688',                  //短信模板
+            TemplateParam: JSON.stringify({sn: no})    //短信模板的数据
+        }).then(function (data) {
+            let Code = data['Code'];
+            if (Code === 'OK') {
+                //处理返回参数
+                res.send(data);
+            }
+        }, function (err) {
+            if (err) {
+                console.log(err);
+            }
+        });
+    });
 }
 
 export {loginRouter}

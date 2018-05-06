@@ -1,10 +1,13 @@
 import * as Models from '../models';
+import { accessKeyId, secretAccessKey } from '../common/conf';
+import * as SMSClient from '@alicloud/sms-sdk'
 
 const ObjectId = require('mongodb').ObjectID;
 const OrderModel = Models.OrderModel;
 const UserModel = Models.CustomModel;
 const ProductModel = Models.ProductModel;
 const NotificationModel = Models.NotificationModel;
+
 
 function productRouter(app) {
     // 创建商品
@@ -266,6 +269,26 @@ function productRouter(app) {
                 content: '您的订单：' + order.sn + ' 己发货，请注意查收！非常感谢您的订购，祝生活愉快！',
                 fromUser: admin._id, //后面改成管理员的Id
                 toUser: customer
+            });
+
+            //初始化sms_client
+            let smsClient = new SMSClient({accessKeyId, secretAccessKey});
+            //发送短信
+            await smsClient.sendSMS({
+                PhoneNumbers: user.phone,                     // 接收号码
+                SignName: '广西盈垦',                            // 签名
+                TemplateCode: 'SMS_133979691',                  //短信模板
+                TemplateParam: JSON.stringify({sn: order.sn})    //短信模板的数据
+            }).then(function (data) {
+                let Code = data['Code'];
+                if (Code === 'OK') {
+                    //处理返回参数
+                    // res.send(data);
+                }
+            }, function (err) {
+                if (err) {
+                    console.log(err);
+                }
             });
 
             res.json({

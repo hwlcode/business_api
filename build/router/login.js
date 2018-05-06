@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var SMSClient = require("@alicloud/sms-sdk");
 var Models = require("../models");
+var conf_1 = require("../common/conf");
 var ObjectId = require('mongodb').ObjectID;
 var md5 = require("blueimp-md5");
 var verifyCode = '';
@@ -54,41 +55,42 @@ function loginRouter(app) {
     var _this = this;
     app.get('/api/verifyCode', function (req, res) {
         var PhoneNumbers = req.query.phone;
-        verifyCode = MathRand(6);
-        if (verifyCode.length < 6) {
-            verifyCode = verifyCode + '0';
+        var msgCode = MathRand(6);
+        if (msgCode.length < 6) {
+            msgCode = msgCode + '0';
         }
-        var accessKeyId = 'LTAI4nllpXNPtH1z';
-        var secretAccessKey = 'K3r32rZC2zBXVZneOrjrcuZQOd2Ocs';
         //初始化sms_client
-        var smsClient = new SMSClient({ accessKeyId: accessKeyId, secretAccessKey: secretAccessKey });
+        var smsClient = new SMSClient({ accessKeyId: conf_1.accessKeyId, secretAccessKey: conf_1.secretAccessKey });
         //发送短信
         smsClient.sendSMS({
             PhoneNumbers: PhoneNumbers,
             SignName: '广西盈垦',
-            TemplateCode: 'SMS_106955018',
-            TemplateParam: '{"code":' + verifyCode + ',"product":"广西盈垦"}' //短信模板的数据
-        }).then(function (res) {
-            var Code = res.Code;
+            TemplateCode: 'SMS_133974635',
+            TemplateParam: '{"code":' + msgCode + '}' //短信模板的数据
+        }).then(function (data) {
+            var Code = data['Code'];
             if (Code === 'OK') {
                 //处理返回参数
-                res.json(res);
+                verifyCode = msgCode;
+                res.send(data);
             }
         }, function (err) {
             if (err) {
-                res.json({ code: 1, msg: '请求次数太频繁，请5分钟后再试！' });
+                console.log(err);
+                res.json({ code: 1, msg: '短信发送太频敏繁，请稍后再试' });
             }
         });
     });
     app.post('/api/user/login', function (req, res) {
         var body = req.body;
-        var password = md5('111111');
+        // let password = md5('111111');
+        console.log(verifyCode);
         (function () { return __awaiter(_this, void 0, void 0, function () {
             var user, opts;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!(body.phoneCode == password)) return [3 /*break*/, 5];
+                        if (!(body.phoneCode == verifyCode)) return [3 /*break*/, 5];
                         return [4 /*yield*/, Models.CustomModel.findOrCreate({
                                 phone: body.phone
                             })];
@@ -210,6 +212,29 @@ function loginRouter(app) {
                 }
             });
         }); })();
+    });
+    app.get('/api/msg_to_business', function (req, res) {
+        var phone = req.query.phone;
+        var no = req.query.no;
+        //初始化sms_client
+        var smsClient = new SMSClient({ accessKeyId: conf_1.accessKeyId, secretAccessKey: conf_1.secretAccessKey });
+        //发送短信
+        smsClient.sendSMS({
+            PhoneNumbers: phone,
+            SignName: '广西盈垦',
+            TemplateCode: 'SMS_133964688',
+            TemplateParam: JSON.stringify({ sn: no }) //短信模板的数据
+        }).then(function (data) {
+            var Code = data['Code'];
+            if (Code === 'OK') {
+                //处理返回参数
+                res.send(data);
+            }
+        }, function (err) {
+            if (err) {
+                console.log(err);
+            }
+        });
     });
 }
 exports.loginRouter = loginRouter;

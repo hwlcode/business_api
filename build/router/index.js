@@ -36,6 +36,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Models = require("../models");
+var conf_1 = require("../common/conf");
+var SMSClient = require("@alicloud/sms-sdk");
 var ObjectId = require('mongodb').ObjectID;
 var OrderModel = Models.OrderModel;
 var UserModel = Models.CustomModel;
@@ -350,7 +352,7 @@ function productRouter(app) {
     app.get('/api/order/send/:id', function (req, res) {
         var id = new ObjectId(req.params.id);
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var order, customer, user, code, product, code, admin;
+            var order, customer, user, code, product, code, admin, smsClient;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, OrderModel.findOne({
@@ -393,6 +395,27 @@ function productRouter(app) {
                             })];
                     case 4:
                         //发送通知
+                        _a.sent();
+                        smsClient = new SMSClient({ accessKeyId: conf_1.accessKeyId, secretAccessKey: conf_1.secretAccessKey });
+                        //发送短信
+                        return [4 /*yield*/, smsClient.sendSMS({
+                                PhoneNumbers: user.phone,
+                                SignName: '广西盈垦',
+                                TemplateCode: 'SMS_133979691',
+                                TemplateParam: JSON.stringify({ sn: order.sn }) //短信模板的数据
+                            }).then(function (data) {
+                                var Code = data['Code'];
+                                if (Code === 'OK') {
+                                    //处理返回参数
+                                    // res.send(data);
+                                }
+                            }, function (err) {
+                                if (err) {
+                                    console.log(err);
+                                }
+                            })];
+                    case 5:
+                        //发送短信
                         _a.sent();
                         res.json({
                             code: 0,
