@@ -25,10 +25,9 @@ function loginRouter(app) {
         if(msgCode.length < 6){
             msgCode = msgCode + '0';
         }
-
         //初始化sms_client
         let smsClient = new SMSClient({accessKeyId, secretAccessKey})
-        //发送短信
+        // //发送短信
         smsClient.sendSMS({
             PhoneNumbers: PhoneNumbers,                     // 接收号码
             SignName: '广西盈垦',                            // 签名
@@ -39,7 +38,7 @@ function loginRouter(app) {
             if (Code === 'OK') {
                 //处理返回参数
                 verifyCode = msgCode;
-                res.send(data);
+                res.send({code: verifyCode});
             }
         }, function (err) {
             if (err) {
@@ -52,7 +51,7 @@ function loginRouter(app) {
     app.post('/api/user/login', (req, res) => {
         const body = req.body;
         // let password = md5('111111');
-console.log(verifyCode);
+console.log(body.phoneCode, verifyCode);
         (async () => {
             // if (body.phoneCode == password) {
             if (body.phoneCode == verifyCode) {

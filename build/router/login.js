@@ -61,7 +61,7 @@ function loginRouter(app) {
         }
         //初始化sms_client
         var smsClient = new SMSClient({ accessKeyId: conf_1.accessKeyId, secretAccessKey: conf_1.secretAccessKey });
-        //发送短信
+        // //发送短信
         smsClient.sendSMS({
             PhoneNumbers: PhoneNumbers,
             SignName: '广西盈垦',
@@ -72,7 +72,7 @@ function loginRouter(app) {
             if (Code === 'OK') {
                 //处理返回参数
                 verifyCode = msgCode;
-                res.send(data);
+                res.send({ code: verifyCode });
             }
         }, function (err) {
             if (err) {
@@ -84,7 +84,7 @@ function loginRouter(app) {
     app.post('/api/user/login', function (req, res) {
         var body = req.body;
         // let password = md5('111111');
-        console.log(verifyCode);
+        console.log(body.phoneCode, verifyCode);
         (function () { return __awaiter(_this, void 0, void 0, function () {
             var user, opts;
             return __generator(this, function (_a) {
