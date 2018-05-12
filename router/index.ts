@@ -249,7 +249,7 @@ function productRouter(app) {
                 _id: new ObjectId(customer)
             }).exec();
             if (order.type == 0) {
-                let code = order.sumPrice;
+                let code = Math.ceil(order.sumPrice);
                 // 更改用户积分
                 user.code += code;
                 user.save();

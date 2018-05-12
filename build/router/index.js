@@ -373,7 +373,7 @@ function productRouter(app) {
                     case 2:
                         user = _a.sent();
                         if (order.type == 0) {
-                            code = order.sumPrice;
+                            code = Math.ceil(order.sumPrice);
                             // 更改用户积分
                             user.code += code;
                             user.save();
