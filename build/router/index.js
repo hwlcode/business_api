@@ -171,6 +171,7 @@ function productRouter(app) {
                                 $set: {
                                     name: body.name,
                                     price: body.price,
+                                    unit: body.unit,
                                     banner: body.banner,
                                     code: body.code,
                                     desc: body.desc
@@ -267,7 +268,9 @@ function productRouter(app) {
                         allOrders = _a.sent();
                         total = allOrders.length;
                         return [3 /*break*/, 6];
-                    case 3: return [4 /*yield*/, OrderModel.find({}).skip(skip).limit(limit).sort({ createdAt: -1, status: -1 }).exec()];
+                    case 3: return [4 /*yield*/, OrderModel.find({
+                            status: { $gte: 1 }
+                        }).skip(skip).limit(limit).sort({ createdAt: -1, status: -1 }).exec()];
                     case 4:
                         orders = _a.sent();
                         return [4 /*yield*/, OrderModel.find().count()];

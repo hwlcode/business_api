@@ -96,6 +96,7 @@ function productRouter(app) {
                     $set: {
                         name: body.name,
                         price: body.price,
+                        unit: body.unit,
                         banner: body.banner,
                         code: body.code,
                         desc: body.desc
@@ -166,7 +167,7 @@ function productRouter(app) {
                 total = allOrders.length;
             } else {
                 orders = await OrderModel.find({
-                    // status: {$gte: 1}
+                    status: {$gte: 1}
                 }).skip(skip).limit(limit).sort({createdAt: -1,status: -1}).exec();
                 total = await OrderModel.find().count();
             }
