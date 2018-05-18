@@ -8,6 +8,7 @@ import {bannerRouter} from './router/banner'
 import {loginRouter} from './router/login'
 import {webApiRouter} from './router/web';
 import {alipayRouter} from "./router/alipay";
+import {AdminRouter} from "./router/admin";
 
 const app = express();
 
@@ -28,6 +29,7 @@ bannerRouter(app);
 loginRouter(app);
 webApiRouter(app);
 alipayRouter(app);
+AdminRouter(app);
 
 if (process.env.NODE_ENV === 'production') {
     app.listen(8000, 'localhost', () => {

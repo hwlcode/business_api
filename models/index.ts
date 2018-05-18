@@ -22,6 +22,7 @@ require('./schema/product');
 require('./schema/file');
 require('./schema/order');
 require('./schema/notification');
+require('./schema/admin');
 
 export const BannerModel = mongoose.model('Banner');
 export const CustomModel = mongoose.model('User');
@@ -29,4 +30,4 @@ export const ProductModel = mongoose.model('Product');
 export const ImagesModel = mongoose.model('Images');
 export const OrderModel = mongoose.model('Order');
 export const NotificationModel = mongoose.model('Notification');
-
+export const AdminMode = mongoose.model('admin');
