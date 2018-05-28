@@ -10,6 +10,7 @@ var login_1 = require("./router/login");
 var web_1 = require("./router/web");
 var alipay_1 = require("./router/alipay");
 var admin_1 = require("./router/admin");
+var wxpay_1 = require("./router/wxpay");
 var app = express();
 //middleware
 app.use('/', express.static(path.join(__dirname, '..', 'public'))); //静态资源存放目录
@@ -28,6 +29,7 @@ login_1.loginRouter(app);
 web_1.webApiRouter(app);
 alipay_1.alipayRouter(app);
 admin_1.AdminRouter(app);
+wxpay_1.wxpay(app);
 if (process.env.NODE_ENV === 'production') {
     app.listen(8000, 'localhost', function () {
         console.log('app is running at pro http://localhost:8000');

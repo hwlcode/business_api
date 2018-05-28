@@ -9,6 +9,7 @@ import {loginRouter} from './router/login'
 import {webApiRouter} from './router/web';
 import {alipayRouter} from "./router/alipay";
 import {AdminRouter} from "./router/admin";
+import { wxpay }  from './router/wxpay';
 
 const app = express();
 
@@ -30,6 +31,7 @@ loginRouter(app);
 webApiRouter(app);
 alipayRouter(app);
 AdminRouter(app);
+wxpay(app);
 
 if (process.env.NODE_ENV === 'production') {
     app.listen(8000, 'localhost', () => {
