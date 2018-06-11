@@ -1,5 +1,5 @@
 import * as Models from '../models';
-import { accessKeyId, secretAccessKey } from '../common/conf';
+import {accessKeyId, secretAccessKey} from '../common/conf';
 import * as SMSClient from '@alicloud/sms-sdk'
 
 const ObjectId = require('mongodb').ObjectID;
@@ -168,7 +168,7 @@ function productRouter(app) {
             } else {
                 orders = await OrderModel.find({
                     status: {$gte: 1}
-                }).skip(skip).limit(limit).sort({createdAt: -1,status: -1}).exec();
+                }).skip(skip).limit(limit).sort({createdAt: -1, status: -1}).exec();
                 total = await OrderModel.find().count();
             }
 
@@ -194,6 +194,18 @@ function productRouter(app) {
             res.json({
                 code: 0,
                 data: order
+            })
+        })();
+    });
+
+    // 删除订单
+    app.get('/api/order/del/:id', (req, res) => {
+        let id = new ObjectId(req.params.id);
+        (async () => {
+            await OrderModel.findOne({_id: id}).remove();
+            res.json({
+                code: 0,
+                msg: 'success'
             })
         })();
     });
@@ -267,7 +279,7 @@ function productRouter(app) {
 
             //发送通知
             await NotificationModel.create({
-                content: '您的订单：' + order.sn + ' 己发货，请注意查收！非常感谢您的订购，祝生活愉快！',
+                content: '您的订单：' + order.sn + ' 己发货，由快递配送，请注意查收！非常感谢您的订购，祝生活愉快！',
                 fromUser: admin._id, //后面改成管理员的Id
                 toUser: customer
             });
@@ -441,7 +453,7 @@ function productRouter(app) {
             let admin = await UserModel.findOne({
                 is_admin: 1
             }).exec();
-console.log(admin);
+
             res.json({
                 code: 0,
                 data: admin

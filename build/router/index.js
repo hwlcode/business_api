@@ -313,6 +313,24 @@ function productRouter(app) {
             });
         }); })();
     });
+    // 删除订单
+    app.get('/api/order/del/:id', function (req, res) {
+        var id = new ObjectId(req.params.id);
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, OrderModel.findOne({ _id: id }).remove()];
+                    case 1:
+                        _a.sent();
+                        res.json({
+                            code: 0,
+                            msg: 'success'
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
     // 更改为己付款
     app.get('/api/order/confirm_order/:id', function (req, res) {
         var id = req.params.id;
@@ -392,7 +410,7 @@ function productRouter(app) {
                         admin = _a.sent();
                         //发送通知
                         return [4 /*yield*/, NotificationModel.create({
-                                content: '您的订单：' + order.sn + ' 己发货，请注意查收！非常感谢您的订购，祝生活愉快！',
+                                content: '您的订单：' + order.sn + ' 己发货，由快递配送，请注意查收！非常感谢您的订购，祝生活愉快！',
                                 fromUser: admin._id,
                                 toUser: customer
                             })];
@@ -620,7 +638,6 @@ function productRouter(app) {
                         }).exec()];
                     case 1:
                         admin = _a.sent();
-                        console.log(admin);
                         res.json({
                             code: 0,
                             data: admin
