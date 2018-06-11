@@ -169,7 +169,9 @@ function productRouter(app) {
                 orders = await OrderModel.find({
                     status: {$gte: 1}
                 }).skip(skip).limit(limit).sort({createdAt: -1, status: -1}).exec();
-                total = await OrderModel.find().count();
+                total = await OrderModel.find({
+                    status: {$gte: 1}
+                }).count();
             }
 
             res.json({
@@ -212,14 +214,17 @@ function productRouter(app) {
 
 
     // 更改为己付款
-    app.get('/api/order/confirm_order/:id', (req, res) => {
-        let id = req.params.id;
+    app.get('/api/order/confirm_order/:id/:payway', (req, res) => {
+        let id = req.params['id'];
+        let payWay = req.params['payway'];
+
         (async () => {
             let order = await OrderModel.findOne({
                 _id: new ObjectId(id)
             }).exec();
             // 更改为己发货状态
             order['status'] = 1;
+            order['payway'] = payWay;
             order.save();
 
             // let code = order.sumPrice;

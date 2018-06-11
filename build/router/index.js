@@ -273,7 +273,9 @@ function productRouter(app) {
                         }).skip(skip).limit(limit).sort({ createdAt: -1, status: -1 }).exec()];
                     case 4:
                         orders = _a.sent();
-                        return [4 /*yield*/, OrderModel.find().count()];
+                        return [4 /*yield*/, OrderModel.find({
+                                status: { $gte: 1 }
+                            }).count()];
                     case 5:
                         total = _a.sent();
                         _a.label = 6;
@@ -332,8 +334,9 @@ function productRouter(app) {
         }); })();
     });
     // 更改为己付款
-    app.get('/api/order/confirm_order/:id', function (req, res) {
-        var id = req.params.id;
+    app.get('/api/order/confirm_order/:id/:payway', function (req, res) {
+        var id = req.params['id'];
+        var payWay = req.params['payway'];
         (function () { return __awaiter(_this, void 0, void 0, function () {
             var order;
             return __generator(this, function (_a) {
@@ -345,6 +348,7 @@ function productRouter(app) {
                         order = _a.sent();
                         // 更改为己发货状态
                         order['status'] = 1;
+                        order['payway'] = payWay;
                         order.save();
                         // let code = order.sumPrice;
                         // let customer = order.customer;

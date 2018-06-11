@@ -8,7 +8,8 @@ var OrderSchema = new Schema({
     sumPrice: { type: Number, default: 0 },
     status: { type: Number, default: 0 },
     customer: { type: Schema.Types.ObjectId, ref: 'User' },
-    type: { type: Number, default: 0 }
+    type: { type: Number, default: 0 },
+    payway: { type: Number, default: 0 }
 }, {
     timestamps: true
 });
