@@ -35,14 +35,16 @@ function loginRouter(app) {
             TemplateParam: '{"code":' + msgCode + '}'    //短信模板的数据
         }).then(function (data) {
             let Code = data['Code'];
+
             if (Code === 'OK') {
                 //处理返回参数
                 verifyCode = msgCode;
+                console.log(data['Message'], '验证码为：' + verifyCode);
                 res.send({code: verifyCode});
             }
         }, function (err) {
             if (err) {
-                console.log(err, PhoneNumbers);
+                console.log(err['data']['Message'], '手机号为： ' + PhoneNumbers);
                 res.json({code: 1, msg: '短信发送太频敏繁，请稍后再试'});
             }
         })
@@ -53,10 +55,8 @@ function loginRouter(app) {
         if (body.phone == '15868823605') {
             verifyCode = '123456';
         }
-        // let password = md5('111111');
-// console.log(body.phoneCode, verifyCode);
+
         (async () => {
-            // if (body.phoneCode == password) {
             if (body.phoneCode == verifyCode) {
                 // 如果为新号码，则作为新用户保存
                 let user = await (Models.CustomModel as any).findOrCreate({
