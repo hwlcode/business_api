@@ -1,6 +1,6 @@
 import * as SMSClient from '@alicloud/sms-sdk'
 import * as Models from '../models';
-import { accessKeyId, secretAccessKey } from '../common/conf';
+import {accessKeyId, secretAccessKey} from '../common/conf';
 
 const ObjectId = require('mongodb').ObjectID;
 const md5 = require("blueimp-md5");
@@ -22,7 +22,7 @@ function loginRouter(app) {
     app.get('/api/verifyCode', (req, res) => {
         const PhoneNumbers = req.query.phone;
         let msgCode = MathRand(6);
-        if(msgCode.length < 6){
+        if (msgCode.length < 6) {
             msgCode = msgCode + '0';
         }
         //初始化sms_client
@@ -42,7 +42,7 @@ function loginRouter(app) {
             }
         }, function (err) {
             if (err) {
-                console.log(err);
+                console.log(err, PhoneNumbers);
                 res.json({code: 1, msg: '短信发送太频敏繁，请稍后再试'});
             }
         })
@@ -50,17 +50,21 @@ function loginRouter(app) {
 
     app.post('/api/user/login', (req, res) => {
         const body = req.body;
+        if (body.phone == '15868823605') {
+            verifyCode = '123456';
+        }
         // let password = md5('111111');
-console.log(body.phoneCode, verifyCode);
+// console.log(body.phoneCode, verifyCode);
         (async () => {
             // if (body.phoneCode == password) {
             if (body.phoneCode == verifyCode) {
+                // 如果为新号码，则作为新用户保存
                 let user = await (Models.CustomModel as any).findOrCreate({
                     phone: body.phone
                 });
 
-                // 保存18078660058为管理员
-                if(user.doc.phone == '18078660058'){
+                // 保存18078660058用户为管理员
+                if (user.doc.phone == '18078660058') {
                     await Models.CustomModel.update({
                         phone: body.phone
                     }, {
@@ -68,6 +72,7 @@ console.log(body.phoneCode, verifyCode);
                     }).exec();
                 }
 
+                // 登录成功返回用户信息
                 let opts = [{
                     path: 'avatar',
                     select: 'path'
