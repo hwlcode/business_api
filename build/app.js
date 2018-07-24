@@ -24,6 +24,7 @@ app.all('*', function (req, res, next) {
 });
 router_1.productRouter(app);
 upload_1.uploaderRouter(app);
+upload_1.multipleUploaderRouter(app);
 banner_1.bannerRouter(app);
 login_1.loginRouter(app);
 web_1.webApiRouter(app);

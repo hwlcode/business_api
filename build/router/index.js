@@ -43,6 +43,7 @@ var OrderModel = Models.OrderModel;
 var UserModel = Models.CustomModel;
 var ProductModel = Models.ProductModel;
 var NotificationModel = Models.NotificationModel;
+var QuestionsModel = Models.QuestionsModel;
 function productRouter(app) {
     var _this = this;
     // 创建商品
@@ -250,6 +251,7 @@ function productRouter(app) {
         var page = req.query.q || 1;
         var limit = 10;
         var skip = (page - 1) * limit;
+        var keywords = req.query.keywords || '';
         (function () { return __awaiter(_this, void 0, void 0, function () {
             var total, allOrders;
             return __generator(this, function (_a) {
@@ -257,6 +259,7 @@ function productRouter(app) {
                     case 0:
                         total = 0;
                         if (!(req.query.id != null)) return [3 /*break*/, 3];
+                        // app
                         id = new ObjectId(req.query.id);
                         return [4 /*yield*/, OrderModel.find({
                                 customer: id
@@ -267,19 +270,36 @@ function productRouter(app) {
                     case 2:
                         allOrders = _a.sent();
                         total = allOrders.length;
-                        return [3 /*break*/, 6];
-                    case 3: return [4 /*yield*/, OrderModel.find({
-                            status: { $gte: 1 }
-                        }).skip(skip).limit(limit).sort({ createdAt: -1, status: -1 }).exec()];
+                        return [3 /*break*/, 9];
+                    case 3:
+                        if (!(keywords == null)) return [3 /*break*/, 6];
+                        return [4 /*yield*/, OrderModel.find({
+                                status: { $gte: 1 }
+                            }).skip(skip).limit(limit).sort({ createdAt: -1, status: -1 }).exec()];
                     case 4:
+                        // 列表
                         orders = _a.sent();
                         return [4 /*yield*/, OrderModel.find({
                                 status: { $gte: 1 }
                             }).count()];
                     case 5:
                         total = _a.sent();
-                        _a.label = 6;
-                    case 6:
+                        return [3 /*break*/, 9];
+                    case 6: return [4 /*yield*/, OrderModel.find({
+                            sn: new RegExp(keywords, 'i'),
+                            status: { $gte: 1 }
+                        }).skip(skip).limit(limit).sort({ createdAt: -1, status: -1 }).exec()];
+                    case 7:
+                        // search
+                        orders = _a.sent();
+                        return [4 /*yield*/, OrderModel.find({
+                                sn: new RegExp(keywords, 'i'),
+                                status: { $gte: 1 }
+                            }).count()];
+                    case 8:
+                        total = _a.sent();
+                        _a.label = 9;
+                    case 9:
                         res.json({
                             code: 0,
                             msg: 'success',
@@ -687,6 +707,98 @@ function productRouter(app) {
                             code: 0,
                             msg: 'success',
                             data: order
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
+    // 保存问题
+    app.post('/api/admin/saveQuestion', function (req, res) {
+        var body = req.body;
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, QuestionsModel.create(body)];
+                    case 1:
+                        _a.sent();
+                        res.json({
+                            code: 0,
+                            msg: 'success'
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
+    // 所有问题
+    app.get('/api/admin/questions-list', function (req, res) {
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            var list;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, QuestionsModel.find().populate({
+                            path: 'files'
+                        }).sort({
+                            createdAt: -1
+                        }).exec()];
+                    case 1:
+                        list = _a.sent();
+                        res.json({
+                            code: 0,
+                            msg: 'success',
+                            data: list
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
+    app.get('/api/admin/question/:id', function (req, res) {
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            var id, question;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        id = new ObjectId(req.params.id);
+                        return [4 /*yield*/, QuestionsModel.findOne({
+                                _id: id
+                            }).populate({
+                                path: 'files'
+                            }).exec()];
+                    case 1:
+                        question = _a.sent();
+                        res.json({
+                            code: 0,
+                            msg: 'success',
+                            data: question
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
+    app.post('/api/admin/updateQuestion', function (req, res) {
+        var body = req.body;
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            var id, question;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        id = new ObjectId(body.id);
+                        return [4 /*yield*/, QuestionsModel.findByIdAndUpdate(id, {
+                                $set: {
+                                    dealCate: body.dealCate,
+                                    dealDesc: body.dealDesc,
+                                    status: 1
+                                }
+                            }).exec()];
+                    case 1:
+                        question = _a.sent();
+                        res.json({
+                            code: 0,
+                            msg: 'success',
+                            data: question
                         });
                         return [2 /*return*/];
                 }

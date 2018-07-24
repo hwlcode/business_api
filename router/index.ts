@@ -7,6 +7,7 @@ const OrderModel = Models.OrderModel;
 const UserModel = Models.CustomModel;
 const ProductModel = Models.ProductModel;
 const NotificationModel = Models.NotificationModel;
+const QuestionsModel = Models.QuestionsModel;
 
 
 function productRouter(app) {
@@ -155,10 +156,12 @@ function productRouter(app) {
         let page = req.query.q || 1;
         let limit = 10;
         let skip = (page - 1) * limit;
+        let keywords = req.query.keywords || '';
 
         (async () => {
             let total = 0;
             if (req.query.id != null) {
+                // app
                 id = new ObjectId(req.query.id);
                 orders = await OrderModel.find({
                     customer: id
@@ -166,12 +169,27 @@ function productRouter(app) {
                 let allOrders = await OrderModel.find();
                 total = allOrders.length;
             } else {
-                orders = await OrderModel.find({
-                    status: {$gte: 1}
-                }).skip(skip).limit(limit).sort({createdAt: -1, status: -1}).exec();
-                total = await OrderModel.find({
-                    status: {$gte: 1}
-                }).count();
+                // admin 后台
+                if (keywords == null) {
+                    // 列表
+                    orders = await OrderModel.find({
+                        status: {$gte: 1}
+                    }).skip(skip).limit(limit).sort({createdAt: -1, status: -1}).exec();
+                    total = await OrderModel.find({
+                        status: {$gte: 1}
+                    }).count();
+                } else {
+                    // search
+                    orders = await OrderModel.find({
+                        sn: new RegExp(keywords, 'i'),
+                        status: {$gte: 1}
+                    }).skip(skip).limit(limit).sort({createdAt: -1, status: -1}).exec();
+                    total = await OrderModel.find({
+                        sn: new RegExp(keywords, 'i'),
+                        status: {$gte: 1}
+                    }).count();
+                }
+
             }
 
             res.json({
@@ -499,6 +517,72 @@ function productRouter(app) {
                 msg: 'success',
                 data: order
             })
+        })();
+    });
+
+    // 保存问题
+    app.post('/api/admin/saveQuestion', (req, res) => {
+        const body = req.body;
+        (async () => {
+            await QuestionsModel.create(body);
+            res.json({
+                code: 0,
+                msg: 'success'
+            });
+        })();
+    });
+
+    // 所有问题
+    app.get('/api/admin/questions-list', (req, res) => {
+        (async () => {
+            const list = await QuestionsModel.find().populate({
+                path: 'files'
+            }).sort({
+                createdAt: -1
+            }).exec();
+
+            res.json({
+                code: 0,
+                msg: 'success',
+                data: list
+            });
+        })();
+    });
+
+    app.get('/api/admin/question/:id', (req, res) => {
+        (async () => {
+            const id = new ObjectId(req.params.id);
+            const question = await QuestionsModel.findOne({
+                _id: id
+            }).populate({
+                path: 'files'
+            }).exec();
+
+            res.json({
+                code: 0,
+                msg: 'success',
+                data: question
+            });
+        })();
+    });
+
+    app.post('/api/admin/updateQuestion', (req, res) => {
+        const body = req.body;
+        (async () => {
+            const id = new ObjectId(body.id);
+            const question = await QuestionsModel.findByIdAndUpdate(id, {
+                $set: {
+                    dealCate: body.dealCate,
+                    dealDesc: body.dealDesc,
+                    status: 1
+                }
+            }).exec();
+
+            res.json({
+                code: 0,
+                msg: 'success',
+                data: question
+            });
         })();
     });
 }

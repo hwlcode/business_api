@@ -3,7 +3,7 @@ import * as path from 'path'
 import * as bodyParser from 'body-parser'
 
 import {productRouter} from './router'
-import {uploaderRouter} from './router/upload'
+import {uploaderRouter, multipleUploaderRouter} from './router/upload'
 import {bannerRouter} from './router/banner'
 import {loginRouter} from './router/login'
 import {webApiRouter} from './router/web';
@@ -26,6 +26,7 @@ app.all('*', function(req, res, next) {
 });
 productRouter(app);
 uploaderRouter(app);
+multipleUploaderRouter(app);
 bannerRouter(app);
 loginRouter(app);
 webApiRouter(app);

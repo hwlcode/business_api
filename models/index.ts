@@ -23,6 +23,7 @@ require('./schema/file');
 require('./schema/order');
 require('./schema/notification');
 require('./schema/admin');
+require('./schema/questions');
 
 export const BannerModel = mongoose.model('Banner');
 export const CustomModel = mongoose.model('User');
@@ -31,3 +32,4 @@ export const ImagesModel = mongoose.model('Images');
 export const OrderModel = mongoose.model('Order');
 export const NotificationModel = mongoose.model('Notification');
 export const AdminMode = mongoose.model('admin');
+export const QuestionsModel = mongoose.model('questions');

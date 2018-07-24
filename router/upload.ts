@@ -16,6 +16,7 @@ const upload = multer({
     storage: storage
 });
 
+// 单文件上传
 function uploaderRouter(app) {
     app.post('/api/upload', upload.single('file'), function (req, res, next) {
         const file = req.file;
@@ -23,13 +24,51 @@ function uploaderRouter(app) {
             var img = await Models.ImagesModel.create({
                 mimeType: file.mimetype,
                 originalName: file.originalname,
-                path: file.path.split('public')[1],
+                path: 'http://127.0.0.1:9527' + file.path.split('public')[1],
                 size: file.size
             });
-            res.send({ret_code: '0', id: img._id, path: img['path']});
+
+            res.send({
+                ret_code: '0',
+                id: img._id,
+                path: img['path'],
+                msg: 'success'
+            });
         })();
     });
 }
 
-export {uploaderRouter}
+// 多个文件上传
+function multipleUploaderRouter(app) {
+    app.post('/api/multiple_upload', upload.array('file', 4), function (req, res, next) {
+        const files = req.files;
+        const fileArr = [];
+        (async () => {
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                var obj = {};
+
+                var img = await Models.ImagesModel.create({
+                    mimeType: file.mimetype,
+                    originalName: file.originalname,
+                    path: 'http://127.0.0.1:9527' + file.path.split('public')[1],
+                    size: file.size
+                });
+
+                obj['id'] = img._id;
+                obj['path'] = 'http://127.0.0.1:9527' + file.path.split('public')[1];
+
+                fileArr.push(obj);
+            }
+
+            res.json({
+                code: 0,
+                files: fileArr,
+                msg: 'success'
+            });
+        })();
+    });
+}
+
+export {uploaderRouter, multipleUploaderRouter}
 

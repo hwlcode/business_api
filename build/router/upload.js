@@ -51,6 +51,7 @@ var storage = multer.diskStorage({
 var upload = multer({
     storage: storage
 });
+// 单文件上传
 function uploaderRouter(app) {
     app.post('/api/upload', upload.single('file'), function (req, res, next) {
         var _this = this;
@@ -62,12 +63,17 @@ function uploaderRouter(app) {
                     case 0: return [4 /*yield*/, Models.ImagesModel.create({
                             mimeType: file.mimetype,
                             originalName: file.originalname,
-                            path: file.path.split('public')[1],
+                            path: 'http://127.0.0.1:9527' + file.path.split('public')[1],
                             size: file.size
                         })];
                     case 1:
                         img = _a.sent();
-                        res.send({ ret_code: '0', id: img._id, path: img['path'] });
+                        res.send({
+                            ret_code: '0',
+                            id: img._id,
+                            path: img['path'],
+                            msg: 'success'
+                        });
                         return [2 /*return*/];
                 }
             });
@@ -75,3 +81,48 @@ function uploaderRouter(app) {
     });
 }
 exports.uploaderRouter = uploaderRouter;
+// 多个文件上传
+function multipleUploaderRouter(app) {
+    app.post('/api/multiple_upload', upload.array('file', 4), function (req, res, next) {
+        var _this = this;
+        var files = req.files;
+        var fileArr = [];
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            var i, file, obj, img;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        i = 0;
+                        _a.label = 1;
+                    case 1:
+                        if (!(i < files.length)) return [3 /*break*/, 4];
+                        file = files[i];
+                        obj = {};
+                        return [4 /*yield*/, Models.ImagesModel.create({
+                                mimeType: file.mimetype,
+                                originalName: file.originalname,
+                                path: 'http://127.0.0.1:9527' + file.path.split('public')[1],
+                                size: file.size
+                            })];
+                    case 2:
+                        img = _a.sent();
+                        obj['id'] = img._id;
+                        obj['path'] = 'http://127.0.0.1:9527' + file.path.split('public')[1];
+                        fileArr.push(obj);
+                        _a.label = 3;
+                    case 3:
+                        i++;
+                        return [3 /*break*/, 1];
+                    case 4:
+                        res.json({
+                            code: 0,
+                            files: fileArr,
+                            msg: 'success'
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
+}
+exports.multipleUploaderRouter = multipleUploaderRouter;
