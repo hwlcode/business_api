@@ -179,6 +179,7 @@ function productRouter(app) {
                         status: {$gte: 1}
                     }).count();
                 } else {
+                    // 测试jenkins
                     // search
                     orders = await OrderModel.find({
                         sn: new RegExp(keywords, 'i'),

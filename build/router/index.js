@@ -290,6 +290,7 @@ function productRouter(app) {
                             status: { $gte: 1 }
                         }).skip(skip).limit(limit).sort({ createdAt: -1, status: -1 }).exec()];
                     case 7:
+                        // 测试jenkins
                         // search
                         orders = _a.sent();
                         return [4 /*yield*/, OrderModel.find({
