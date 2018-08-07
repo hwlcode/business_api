@@ -35,15 +35,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Models = require("../models");
+var models_1 = require("../models");
 var conf_1 = require("../common/conf");
 var SMSClient = require("@alicloud/sms-sdk");
 var ObjectId = require('mongodb').ObjectID;
-var OrderModel = Models.OrderModel;
-var UserModel = Models.CustomModel;
-var ProductModel = Models.ProductModel;
-var NotificationModel = Models.NotificationModel;
-var QuestionsModel = Models.QuestionsModel;
 function productRouter(app) {
     var _this = this;
     // 创建商品
@@ -52,7 +47,7 @@ function productRouter(app) {
         (function () { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, Models.ProductModel.create(body)];
+                    case 0: return [4 /*yield*/, models_1.ProductModel.create(body)];
                     case 1:
                         _a.sent();
                         res.json({ code: 0, msg: 'success' });
@@ -75,12 +70,12 @@ function productRouter(app) {
                             path: 'banner',
                             select: 'path'
                         };
-                        return [4 /*yield*/, Models.ProductModel.find().populate(opt).skip(skip).limit(limit).sort({
+                        return [4 /*yield*/, models_1.ProductModel.find().populate(opt).skip(skip).limit(limit).sort({
                                 createdAt: -1
                             })];
                     case 1:
                         productList = _a.sent();
-                        return [4 /*yield*/, Models.ProductModel.find()];
+                        return [4 /*yield*/, models_1.ProductModel.find()];
                     case 2:
                         products = _a.sent();
                         res.json({
@@ -110,14 +105,14 @@ function productRouter(app) {
                             path: 'banner',
                             select: 'path'
                         };
-                        return [4 /*yield*/, Models.ProductModel.find({
+                        return [4 /*yield*/, models_1.ProductModel.find({
                                 name: pattern
                             }).populate(opt).skip(skip).limit(limit).sort({
                                 createdAt: -1
                             })];
                     case 1:
                         productList = _a.sent();
-                        return [4 /*yield*/, Models.ProductModel.find()];
+                        return [4 /*yield*/, models_1.ProductModel.find()];
                     case 2:
                         products = _a.sent();
                         isLast = (page * limit) >= products.length;
@@ -145,7 +140,7 @@ function productRouter(app) {
                 var product;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, Models.ProductModel.findOne({ _id: id_1 }).populate(opt_1).exec()];
+                        case 0: return [4 /*yield*/, models_1.ProductModel.findOne({ _id: id_1 }).populate(opt_1).exec()];
                         case 1:
                             product = _a.sent();
                             if (product !== null) {
@@ -168,7 +163,7 @@ function productRouter(app) {
             (function () { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, Models.ProductModel.findByIdAndUpdate({ _id: id }, {
+                        case 0: return [4 /*yield*/, models_1.ProductModel.findByIdAndUpdate({ _id: id }, {
                                 $set: {
                                     name: body.name,
                                     price: body.price,
@@ -197,14 +192,14 @@ function productRouter(app) {
             var opt, productList;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, Models.ProductModel.findOne({ _id: id }).remove()];
+                    case 0: return [4 /*yield*/, models_1.ProductModel.findOne({ _id: id }).remove()];
                     case 1:
                         _a.sent();
                         opt = {
                             path: 'banner',
                             select: 'path'
                         };
-                        return [4 /*yield*/, Models.ProductModel.find().populate(opt).sort({
+                        return [4 /*yield*/, models_1.ProductModel.find().populate(opt).sort({
                                 createdAt: -1
                             })];
                     case 2:
@@ -230,7 +225,7 @@ function productRouter(app) {
             var order;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, OrderModel.create(body)];
+                    case 0: return [4 /*yield*/, models_1.OrderModel.create(body)];
                     case 1:
                         order = _a.sent();
                         res.json({
@@ -261,31 +256,31 @@ function productRouter(app) {
                         if (!(req.query.id != null)) return [3 /*break*/, 3];
                         // app
                         id = new ObjectId(req.query.id);
-                        return [4 /*yield*/, OrderModel.find({
+                        return [4 /*yield*/, models_1.OrderModel.find({
                                 customer: id
                             }).skip(skip).limit(limit).sort({ createdAt: -1 }).exec()];
                     case 1:
                         orders = _a.sent();
-                        return [4 /*yield*/, OrderModel.find()];
+                        return [4 /*yield*/, models_1.OrderModel.find()];
                     case 2:
                         allOrders = _a.sent();
                         total = allOrders.length;
                         return [3 /*break*/, 9];
                     case 3:
                         if (!(keywords == null)) return [3 /*break*/, 6];
-                        return [4 /*yield*/, OrderModel.find({
+                        return [4 /*yield*/, models_1.OrderModel.find({
                                 status: { $gte: 1 }
                             }).skip(skip).limit(limit).sort({ createdAt: -1, status: -1 }).exec()];
                     case 4:
                         // 列表
                         orders = _a.sent();
-                        return [4 /*yield*/, OrderModel.find({
+                        return [4 /*yield*/, models_1.OrderModel.find({
                                 status: { $gte: 1 }
                             }).count()];
                     case 5:
                         total = _a.sent();
                         return [3 /*break*/, 9];
-                    case 6: return [4 /*yield*/, OrderModel.find({
+                    case 6: return [4 /*yield*/, models_1.OrderModel.find({
                             sn: new RegExp(keywords, 'i'),
                             status: { $gte: 1 }
                         }).skip(skip).limit(limit).sort({ createdAt: -1, status: -1 }).exec()];
@@ -293,7 +288,7 @@ function productRouter(app) {
                         // 测试jenkins
                         // search
                         orders = _a.sent();
-                        return [4 /*yield*/, OrderModel.find({
+                        return [4 /*yield*/, models_1.OrderModel.find({
                                 sn: new RegExp(keywords, 'i'),
                                 status: { $gte: 1 }
                             }).count()];
@@ -322,7 +317,7 @@ function productRouter(app) {
             var order;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, OrderModel.find({
+                    case 0: return [4 /*yield*/, models_1.OrderModel.find({
                             _id: id
                         }).populate(opt).exec()];
                     case 1:
@@ -342,7 +337,7 @@ function productRouter(app) {
         (function () { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, OrderModel.findOne({ _id: id }).remove()];
+                    case 0: return [4 /*yield*/, models_1.OrderModel.findOne({ _id: id }).remove()];
                     case 1:
                         _a.sent();
                         res.json({
@@ -362,7 +357,7 @@ function productRouter(app) {
             var order;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, OrderModel.findOne({
+                    case 0: return [4 /*yield*/, models_1.OrderModel.findOne({
                             _id: new ObjectId(id)
                         }).exec()];
                     case 1:
@@ -401,7 +396,7 @@ function productRouter(app) {
             var order, customer, user, code, product, code, admin, smsClient;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, OrderModel.findOne({
+                    case 0: return [4 /*yield*/, models_1.OrderModel.findOne({
                             _id: id
                         }).exec()];
                     case 1:
@@ -410,7 +405,7 @@ function productRouter(app) {
                         order.status = 2;
                         order.save();
                         customer = order.customer;
-                        return [4 /*yield*/, UserModel.findOne({
+                        return [4 /*yield*/, models_1.CustomModel.findOne({
                                 _id: new ObjectId(customer)
                             }).exec()];
                     case 2:
@@ -428,13 +423,13 @@ function productRouter(app) {
                             user.code -= code;
                             user.save();
                         }
-                        return [4 /*yield*/, UserModel.findOne({
+                        return [4 /*yield*/, models_1.CustomModel.findOne({
                                 is_admin: 1
                             }).exec()];
                     case 3:
                         admin = _a.sent();
                         //发送通知
-                        return [4 /*yield*/, NotificationModel.create({
+                        return [4 /*yield*/, models_1.NotificationModel.create({
                                 content: '您的订单：' + order.sn + ' 己发货，由快递配送，请注意查收！非常感谢您的订购，祝生活愉快！',
                                 fromUser: admin._id,
                                 toUser: customer
@@ -483,7 +478,7 @@ function productRouter(app) {
                 switch (_a.label) {
                     case 0: 
                     //发送通知
-                    return [4 /*yield*/, NotificationModel.create({
+                    return [4 /*yield*/, models_1.NotificationModel.create({
                             content: content,
                             fromUser: fromUser,
                             toUser: toUser
@@ -507,7 +502,7 @@ function productRouter(app) {
             var list;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, NotificationModel.find({
+                    case 0: return [4 /*yield*/, models_1.NotificationModel.find({
                             toUser: userId,
                             status: 0
                         }).sort({
@@ -532,7 +527,7 @@ function productRouter(app) {
             var list;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, NotificationModel.find({
+                    case 0: return [4 /*yield*/, models_1.NotificationModel.find({
                             toUser: userId,
                             status: 0,
                             read: 0
@@ -558,7 +553,7 @@ function productRouter(app) {
             var item;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, NotificationModel.findOne({
+                    case 0: return [4 /*yield*/, models_1.NotificationModel.findOne({
                             _id: id
                         }).exec()];
                     case 1:
@@ -581,7 +576,7 @@ function productRouter(app) {
             var item;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, NotificationModel.findOne({
+                    case 0: return [4 /*yield*/, models_1.NotificationModel.findOne({
                             _id: id
                         }).exec()];
                     case 1:
@@ -603,16 +598,16 @@ function productRouter(app) {
             var product_sun, order_sun, year, month, day, order_today, order_status_1, user_sun, user_today;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, ProductModel.find().count()];
+                    case 0: return [4 /*yield*/, models_1.ProductModel.find().count()];
                     case 1:
                         product_sun = _a.sent();
-                        return [4 /*yield*/, OrderModel.find().count()];
+                        return [4 /*yield*/, models_1.OrderModel.find().count()];
                     case 2:
                         order_sun = _a.sent();
                         year = new Date().getFullYear();
                         month = new Date().getMonth() + 1;
                         day = new Date().getDate();
-                        return [4 /*yield*/, OrderModel.find({
+                        return [4 /*yield*/, models_1.OrderModel.find({
                                 createdAt: {
                                     $gte: new Date(year + '-' + month + '-' + day + ' 00:00:00'),
                                     $lt: new Date(year + '-' + month + '-' + day + ' 23:59:59')
@@ -620,15 +615,15 @@ function productRouter(app) {
                             }).count()];
                     case 3:
                         order_today = _a.sent();
-                        return [4 /*yield*/, OrderModel.find({
+                        return [4 /*yield*/, models_1.OrderModel.find({
                                 status: 1
                             }).count()];
                     case 4:
                         order_status_1 = _a.sent();
-                        return [4 /*yield*/, UserModel.find().count()];
+                        return [4 /*yield*/, models_1.CustomModel.find().count()];
                     case 5:
                         user_sun = _a.sent();
-                        return [4 /*yield*/, UserModel.find({
+                        return [4 /*yield*/, models_1.CustomModel.find({
                                 createdAt: {
                                     $gte: new Date(year + '-' + month + '-' + day + ' 00:00:00'),
                                     $lt: new Date(year + '-' + month + '-' + day + ' 23:59:59')
@@ -658,7 +653,7 @@ function productRouter(app) {
             var admin;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, UserModel.findOne({
+                    case 0: return [4 /*yield*/, models_1.CustomModel.findOne({
                             is_admin: 1
                         }).exec()];
                     case 1:
@@ -687,16 +682,16 @@ function productRouter(app) {
                         body['customer'] = id;
                         body['sn'] = 'YK' + new Date().getTime();
                         body['type'] = 1;
-                        return [4 /*yield*/, OrderModel.create(body)];
+                        return [4 /*yield*/, models_1.OrderModel.create(body)];
                     case 1:
                         order = _a.sent();
-                        return [4 /*yield*/, UserModel.findOne({
+                        return [4 /*yield*/, models_1.CustomModel.findOne({
                                 is_admin: 1
                             }).exec()];
                     case 2:
                         admin = _a.sent();
                         //发送通知
-                        return [4 /*yield*/, NotificationModel.create({
+                        return [4 /*yield*/, models_1.NotificationModel.create({
                                 content: '我们己经收到您的订单：' + body['sn'] + ' 非常感谢您的订购，我们会尽快为您处理，祝生活愉快！',
                                 fromUser: admin._id,
                                 toUser: id
@@ -720,7 +715,7 @@ function productRouter(app) {
         (function () { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, QuestionsModel.create(body)];
+                    case 0: return [4 /*yield*/, models_1.QuestionsModel.create(body)];
                     case 1:
                         _a.sent();
                         res.json({
@@ -738,7 +733,7 @@ function productRouter(app) {
             var list;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, QuestionsModel.find().populate({
+                    case 0: return [4 /*yield*/, models_1.QuestionsModel.find().populate({
                             path: 'files'
                         }).sort({
                             createdAt: -1
@@ -755,6 +750,7 @@ function productRouter(app) {
             });
         }); })();
     });
+    // 查询问题
     app.get('/api/admin/question/:id', function (req, res) {
         (function () { return __awaiter(_this, void 0, void 0, function () {
             var id, question;
@@ -762,7 +758,7 @@ function productRouter(app) {
                 switch (_a.label) {
                     case 0:
                         id = new ObjectId(req.params.id);
-                        return [4 /*yield*/, QuestionsModel.findOne({
+                        return [4 /*yield*/, models_1.QuestionsModel.findOne({
                                 _id: id
                             }).populate({
                                 path: 'files'
@@ -779,6 +775,7 @@ function productRouter(app) {
             });
         }); })();
     });
+    // 更新问题
     app.post('/api/admin/updateQuestion', function (req, res) {
         var body = req.body;
         (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -787,7 +784,7 @@ function productRouter(app) {
                 switch (_a.label) {
                     case 0:
                         id = new ObjectId(body.id);
-                        return [4 /*yield*/, QuestionsModel.findByIdAndUpdate(id, {
+                        return [4 /*yield*/, models_1.QuestionsModel.findByIdAndUpdate(id, {
                                 $set: {
                                     dealCate: body.dealCate,
                                     dealDesc: body.dealDesc,
@@ -800,6 +797,59 @@ function productRouter(app) {
                             code: 0,
                             msg: 'success',
                             data: question
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
+    // 保存版本
+    app.post('/api/admin/save/version', function (req, res) {
+        var body = req.body;
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            var version;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, models_1.VersionModel.findOne().exec()];
+                    case 1:
+                        version = _a.sent();
+                        if (!(version == null)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, models_1.VersionModel.create(body)];
+                    case 2:
+                        _a.sent();
+                        return [3 /*break*/, 5];
+                    case 3:
+                        version['versionNumber'] = body.versionNumber;
+                        version['androidUrl'] = body.androidUrl;
+                        version['iosUrl'] = body.iosUrl;
+                        version['desc'] = body.desc;
+                        return [4 /*yield*/, version.save()];
+                    case 4:
+                        _a.sent();
+                        _a.label = 5;
+                    case 5:
+                        res.json({
+                            code: 0,
+                            msg: 'success'
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
+    // 获取版本
+    app.get('/api/admin/get/version', function (req, res) {
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            var version;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, models_1.VersionModel.findOne().exec()];
+                    case 1:
+                        version = _a.sent();
+                        res.json({
+                            code: 0,
+                            msg: 'success',
+                            data: version
                         });
                         return [2 /*return*/];
                 }

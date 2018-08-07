@@ -3,9 +3,9 @@ import * as mongoose from 'mongoose';
 
 let db = '';
 if (process.env.NODE_ENV === 'production') {
-     db = 'mongodb://127.0.0.1:27027/aniu';
-}else{
-     db = 'mongodb://127.0.0.1:27017/aniu';
+    db = 'mongodb://127.0.0.1:27027/aniu';
+} else {
+    db = 'mongodb://127.0.0.1:27017/aniu';
 }
 
 (mongoose as any).Promise = global.Promise;
@@ -24,12 +24,26 @@ require('./schema/order');
 require('./schema/notification');
 require('./schema/admin');
 require('./schema/questions');
+require('./schema/version');
 
-export const BannerModel = mongoose.model('Banner');
-export const CustomModel = mongoose.model('User');
-export const ProductModel = mongoose.model('Product');
-export const ImagesModel = mongoose.model('Images');
-export const OrderModel = mongoose.model('Order');
-export const NotificationModel = mongoose.model('Notification');
-export const AdminMode = mongoose.model('admin');
-export const QuestionsModel = mongoose.model('questions');
+const BannerModel = mongoose.model('Banner');
+const CustomModel = mongoose.model('User');
+const ProductModel = mongoose.model('Product');
+const ImagesModel = mongoose.model('Images');
+const OrderModel = mongoose.model('Order');
+const NotificationModel = mongoose.model('Notification');
+const AdminModel = mongoose.model('admin');
+const QuestionsModel = mongoose.model('questions');
+const VersionModel = mongoose.model('versions');
+
+export {
+    BannerModel,
+    CustomModel,
+    ProductModel,
+    ImagesModel,
+    OrderModel,
+    NotificationModel,
+    AdminModel,
+    QuestionsModel,
+    VersionModel
+}

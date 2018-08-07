@@ -37,22 +37,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Models = require("../models");
 var multer = require("multer");
-var storage = multer.diskStorage({
-    //设置上传后文件路径，uploads文件夹会自动创建。
-    destination: function (req, file, cb) {
-        //目录要手动创建
-        cb(null, './public/uploads');
-    },
-    //给上传文件重命名，获取添加后缀名
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + "." + file.originalname.split('.')[1]);
-    }
-});
-var upload = multer({
-    storage: storage
-});
 // 单文件上传
 function uploaderRouter(app) {
+    var storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            //目录要手动创建
+            cb(null, './public/uploads');
+        },
+        //给上传文件重命名，获取添加后缀名
+        filename: function (req, file, cb) {
+            cb(null, file.fieldname + '-' + Date.now() + "." + file.originalname.split('.')[1]);
+        }
+    });
+    var upload = multer({
+        storage: storage
+    });
     app.post('/api/upload', upload.single('file'), function (req, res, next) {
         var _this = this;
         var file = req.file;
@@ -81,8 +80,47 @@ function uploaderRouter(app) {
     });
 }
 exports.uploaderRouter = uploaderRouter;
+function uploaderAPKRouter(app) {
+    var storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            //目录要手动创建
+            cb(null, './public/apk');
+        },
+        //给上传文件重命名，获取添加后缀名
+        filename: function (req, file, cb) {
+            cb(null, file.fieldname + '-' + Date.now() + "." + file.originalname.split('.')[1]);
+        }
+    });
+    var upload = multer({
+        storage: storage
+    });
+    app.post('/api/upload/apk', upload.single('apk'), function (req, res, next) {
+        var _this = this;
+        var file = req.apk;
+        console.log(file);
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/];
+            });
+        }); })();
+    });
+}
+exports.uploaderAPKRouter = uploaderAPKRouter;
 // 多个文件上传
 function multipleUploaderRouter(app) {
+    var storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            //目录要手动创建
+            cb(null, './public/uploads');
+        },
+        //给上传文件重命名，获取添加后缀名
+        filename: function (req, file, cb) {
+            cb(null, file.fieldname + '-' + Date.now() + "." + file.originalname.split('.')[1]);
+        }
+    });
+    var upload = multer({
+        storage: storage
+    });
     app.post('/api/multiple_upload', upload.array('file', 4), function (req, res, next) {
         var _this = this;
         var files = req.files;

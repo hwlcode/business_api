@@ -1,13 +1,8 @@
-import * as Models from '../models';
+import {OrderModel, CustomModel, ProductModel, NotificationModel, QuestionsModel, VersionModel} from '../models';
 import {accessKeyId, secretAccessKey} from '../common/conf';
 import * as SMSClient from '@alicloud/sms-sdk'
 
 const ObjectId = require('mongodb').ObjectID;
-const OrderModel = Models.OrderModel;
-const UserModel = Models.CustomModel;
-const ProductModel = Models.ProductModel;
-const NotificationModel = Models.NotificationModel;
-const QuestionsModel = Models.QuestionsModel;
 
 
 function productRouter(app) {
@@ -15,7 +10,7 @@ function productRouter(app) {
     app.post('/api/saveProduct', (req, res) => {
         const body = req.body;
         (async () => {
-            await Models.ProductModel.create(body);
+            await ProductModel.create(body);
             res.json({code: 0, msg: 'success'});
         })();
     });
@@ -29,10 +24,10 @@ function productRouter(app) {
                 path: 'banner',
                 select: 'path'
             };
-            const productList = await Models.ProductModel.find().populate(opt).skip(skip).limit(limit).sort({
+            const productList = await ProductModel.find().populate(opt).skip(skip).limit(limit).sort({
                 createdAt: -1
             });
-            const products = await Models.ProductModel.find();
+            const products = await ProductModel.find();
             res.json({
                 code: 0,
                 msg: 'success',
@@ -53,12 +48,12 @@ function productRouter(app) {
                 path: 'banner',
                 select: 'path'
             };
-            const productList = await Models.ProductModel.find({
+            const productList = await ProductModel.find({
                 name: pattern
             }).populate(opt).skip(skip).limit(limit).sort({
                 createdAt: -1
             });
-            const products = await Models.ProductModel.find();
+            const products = await ProductModel.find();
             const isLast = (page * limit) >= products.length;
             res.json({
                 code: 0,
@@ -69,6 +64,7 @@ function productRouter(app) {
             });
         })();
     });
+
     // 产品详情
     app.get('/api/product/:id', (req, res) => {
         if (req.params.id != 0) {
@@ -78,7 +74,7 @@ function productRouter(app) {
                 select: 'path'
             };
             (async () => {
-                const product = await Models.ProductModel.findOne({_id: id}).populate(opt).exec();
+                const product = await ProductModel.findOne({_id: id}).populate(opt).exec();
                 if (product !== null) {
                     res.json(product);
                 }
@@ -93,7 +89,7 @@ function productRouter(app) {
         let body = req.body;
         if (req.params.id != 0) {
             (async () => {
-                await Models.ProductModel.findByIdAndUpdate({_id: id}, {
+                await ProductModel.findByIdAndUpdate({_id: id}, {
                     $set: {
                         name: body.name,
                         price: body.price,
@@ -114,12 +110,12 @@ function productRouter(app) {
     app.get('/api/delete/:id', (req, res) => {
         let id = new ObjectId(req.params.id);
         (async () => {
-            await Models.ProductModel.findOne({_id: id}).remove();
+            await ProductModel.findOne({_id: id}).remove();
             let opt = {
                 path: 'banner',
                 select: 'path'
             };
-            const productList = await Models.ProductModel.find().populate(opt).sort({
+            const productList = await ProductModel.find().populate(opt).sort({
                 createdAt: -1
             });
 
@@ -130,7 +126,6 @@ function productRouter(app) {
             })
         })();
     });
-
 
     // 添加订单
     app.get('/api/order/add', (req, res) => {
@@ -218,7 +213,6 @@ function productRouter(app) {
             })
         })();
     });
-
     // 删除订单
     app.get('/api/order/del/:id', (req, res) => {
         let id = new ObjectId(req.params.id);
@@ -230,8 +224,6 @@ function productRouter(app) {
             })
         })();
     });
-
-
     // 更改为己付款
     app.get('/api/order/confirm_order/:id/:payway', (req, res) => {
         let id = req.params['id'];
@@ -281,7 +273,7 @@ function productRouter(app) {
             order.save();
 
             let customer = order.customer;
-            let user: any = await UserModel.findOne({
+            let user: any = await CustomModel.findOne({
                 _id: new ObjectId(customer)
             }).exec();
             if (order.type == 0) {
@@ -297,7 +289,7 @@ function productRouter(app) {
                 user.save();
             }
 
-            let admin = await UserModel.findOne({
+            let admin = await CustomModel.findOne({
                 is_admin: 1
             }).exec();
 
@@ -449,8 +441,8 @@ function productRouter(app) {
                 status: 1
             }).count();
 
-            let user_sun = await UserModel.find().count();
-            let user_today = await UserModel.find({
+            let user_sun = await CustomModel.find().count();
+            let user_today = await CustomModel.find({
                 createdAt: {
                     $gte: new Date(year + '-' + month + '-' + day + ' 00:00:00'),
                     $lt: new Date(year + '-' + month + '-' + day + ' 23:59:59')
@@ -474,7 +466,7 @@ function productRouter(app) {
     // 获取管理的id
     app.get('/api/get_admin_id', (req, res) => {
         (async () => {
-            let admin = await UserModel.findOne({
+            let admin = await CustomModel.findOne({
                 is_admin: 1
             }).exec();
 
@@ -484,7 +476,6 @@ function productRouter(app) {
             })
         })();
     });
-
     // 积分兑换订单
     app.post('/api/update_code', (req, res) => {
         let id = req.body.id;
@@ -502,7 +493,7 @@ function productRouter(app) {
             let order = await OrderModel.create(body);
 
             // 发送通知
-            let admin = await UserModel.findOne({
+            let admin = await CustomModel.findOne({
                 is_admin: 1
             }).exec();
 
@@ -532,7 +523,6 @@ function productRouter(app) {
             });
         })();
     });
-
     // 所有问题
     app.get('/api/admin/questions-list', (req, res) => {
         (async () => {
@@ -549,7 +539,7 @@ function productRouter(app) {
             });
         })();
     });
-
+    // 查询问题
     app.get('/api/admin/question/:id', (req, res) => {
         (async () => {
             const id = new ObjectId(req.params.id);
@@ -566,7 +556,7 @@ function productRouter(app) {
             });
         })();
     });
-
+    // 更新问题
     app.post('/api/admin/updateQuestion', (req, res) => {
         const body = req.body;
         (async () => {
@@ -586,6 +576,40 @@ function productRouter(app) {
             });
         })();
     });
+
+    // 保存版本
+    app.post('/api/admin/save/version', (req, res) => {
+        const body = req.body;
+        (async () => {
+            const version = await VersionModel.findOne().exec();
+            if(version == null){
+                await VersionModel.create(body);
+            }else{
+                version['versionNumber'] = body.versionNumber;
+                version['androidUrl'] = body.androidUrl;
+                version['iosUrl'] = body.iosUrl;
+                version['desc'] = body.desc;
+                await version.save();
+            }
+
+            res.json({
+                code: 0,
+                msg: 'success'
+            })
+        })();
+    });
+    // 获取版本
+    app.get('/api/admin/get/version', (req, res) => {
+        (async () => {
+            const version = await VersionModel.findOne().exec();
+            res.json({
+                code: 0,
+                msg: 'success',
+                data: version
+            })
+        })();
+    });
+
 }
 
 export {productRouter}

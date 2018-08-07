@@ -35,9 +35,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Models = require("../models");
+var models_1 = require("../models");
 var MD5 = require("ts-md5");
-var AdminModel = Models.AdminMode;
 var ObjectId = require('mongodb').ObjectID;
 function AdminRouter(app) {
     var _this = this;
@@ -47,13 +46,13 @@ function AdminRouter(app) {
             var user;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, AdminModel.findOne({
+                    case 0: return [4 /*yield*/, models_1.AdminModel.findOne({
                             phone: body.phone
                         }).exec()];
                     case 1:
                         user = _a.sent();
                         if (!(user == null)) return [3 /*break*/, 3];
-                        return [4 /*yield*/, AdminModel.create(body)];
+                        return [4 /*yield*/, models_1.AdminModel.create(body)];
                     case 2:
                         _a.sent();
                         _a.label = 3;
@@ -72,7 +71,7 @@ function AdminRouter(app) {
             var users;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, AdminModel.find().sort({
+                    case 0: return [4 /*yield*/, models_1.AdminModel.find().sort({
                             created: -1
                         }).exec()];
                     case 1:
@@ -95,10 +94,10 @@ function AdminRouter(app) {
                 switch (_a.label) {
                     case 0:
                         id = new ObjectId(req.params.id);
-                        return [4 /*yield*/, AdminModel.remove({ _id: id })];
+                        return [4 /*yield*/, models_1.AdminModel.remove({ _id: id })];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, AdminModel.find().sort({
+                        return [4 /*yield*/, models_1.AdminModel.find().sort({
                                 created: -1
                             }).exec()];
                     case 2:
@@ -120,7 +119,7 @@ function AdminRouter(app) {
             var user;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, AdminModel.find({
+                    case 0: return [4 /*yield*/, models_1.AdminModel.find({
                             _id: id
                         }).exec()];
                     case 1:
@@ -142,7 +141,7 @@ function AdminRouter(app) {
                     case 0:
                         body = req.body;
                         id = new ObjectId(body.id);
-                        return [4 /*yield*/, AdminModel.findByIdAndUpdate({
+                        return [4 /*yield*/, models_1.AdminModel.findByIdAndUpdate({
                                 _id: id
                             }, {
                                 $set: {
@@ -169,7 +168,7 @@ function AdminRouter(app) {
                 switch (_a.label) {
                     case 0:
                         body = req.body;
-                        return [4 /*yield*/, AdminModel.findOne({
+                        return [4 /*yield*/, models_1.AdminModel.findOne({
                                 phone: body.userName
                             }).exec()];
                     case 1:
@@ -211,7 +210,7 @@ function AdminRouter(app) {
                     case 0:
                         usr = req.query.usr;
                         token = req.query.token;
-                        return [4 /*yield*/, AdminModel.findOne({
+                        return [4 /*yield*/, models_1.AdminModel.findOne({
                                 phone: usr
                             }).exec()];
                     case 1:

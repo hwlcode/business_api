@@ -1,7 +1,5 @@
-import * as Models from '../models';
+import {AdminModel} from '../models';
 import * as MD5 from 'ts-md5';
-
-const AdminModel = Models.AdminMode;
 const ObjectId = require('mongodb').ObjectID;
 
 function AdminRouter(app) {
