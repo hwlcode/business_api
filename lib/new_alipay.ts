@@ -17,7 +17,7 @@ class NewAlipay {
      */
     ali = new Alipay({
         appId: '2018040302498148',
-        notifyUrl: 'http://192.168.1.102/callback/alipay',
+        notifyUrl: 'http://admin.gxyingken.com/api/callback/alipay',
         rsaPrivate: path.resolve('./pem/rsa_private_key.pem'),
         rsaPublic: path.resolve('./pem/rsa_public_key.pem'),
         sandbox: true,
@@ -47,7 +47,9 @@ class NewAlipay {
     getAppParams(opts) {
         let params = this.ali.appPay({
             subject: opts.subject, // 标题
+            // subject: 'test',
             body: opts.body, // 商品描述
+            // body: 'test',
             outTradeId: opts.outTradeId, // 订单号
             timeout: '30m',
             amount: opts.amount, // 总价格

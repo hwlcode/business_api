@@ -64,6 +64,22 @@ function productRouter(app) {
             });
         })();
     });
+    // app 产品详情
+    app.get('/api/app/product/:id', (req, res) => {
+        (async () => {
+            const id = new ObjectId(req.params.id);
+            const product = await ProductModel.findOne({_id: id}).populate({
+                path: 'banner',
+                select: 'path'
+            }).exec();
+
+            res.json({
+                code: 0,
+                msg: 'success',
+                data: product
+            });
+        })();
+    });
 
     // 产品详情
     app.get('/api/product/:id', (req, res) => {
@@ -396,9 +412,16 @@ function productRouter(app) {
             item.status = 1;
             item.save();
 
+            let unRead = await NotificationModel.find({
+                toUser: new ObjectId(req.query.userId),
+                status: 0,
+                read: 0
+            }).exec();
+
             res.json({
                 code: 0,
-                msg: 'success'
+                msg: 'success',
+                data: {unReadNum: unRead.length}
             })
         })();
     });
@@ -413,9 +436,16 @@ function productRouter(app) {
             item.read = 1;
             item.save();
 
+            let unRead = await NotificationModel.find({
+                toUser: new ObjectId(req.query.userId),
+                status: 0,
+                read: 0
+            }).exec();
+
             res.json({
                 code: 0,
-                msg: 'success'
+                msg: 'success',
+                data: {unReadNum: unRead.length - 1}
             })
         })();
     });

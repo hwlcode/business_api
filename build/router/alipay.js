@@ -11,6 +11,9 @@ function alipayRouter(app) {
             amount: req.query.amount // 金额 req.query.amount
         };
         var params = newAlipay.getAppParams(opts);
+        // app支付因没有提供上线的内容介络，被支付宝官方把app支付功能下线，导致报没有isv权限，客户端显示'系统繁忙，支付失败'
+        // 要恢复功能，需要把提供detail页面，另外需要上架android市场
+        // todo
         res.json({
             code: 0,
             data: {

@@ -18,7 +18,7 @@ var NewAlipay = (function () {
          */
         this.ali = new Alipay({
             appId: '2018040302498148',
-            notifyUrl: 'http://192.168.1.102/callback/alipay',
+            notifyUrl: 'http://admin.gxyingken.com/api/callback/alipay',
             rsaPrivate: path.resolve('./pem/rsa_private_key.pem'),
             rsaPublic: path.resolve('./pem/rsa_public_key.pem'),
             sandbox: true,
@@ -48,7 +48,9 @@ var NewAlipay = (function () {
     NewAlipay.prototype.getAppParams = function (opts) {
         var params = this.ali.appPay({
             subject: opts.subject,
+            // subject: 'test',
             body: opts.body,
+            // body: 'test',
             outTradeId: opts.outTradeId,
             timeout: '30m',
             amount: opts.amount,

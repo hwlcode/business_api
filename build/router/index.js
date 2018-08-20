@@ -128,6 +128,30 @@ function productRouter(app) {
             });
         }); })();
     });
+    // app 产品详情
+    app.get('/api/app/product/:id', function (req, res) {
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            var id, product;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        id = new ObjectId(req.params.id);
+                        return [4 /*yield*/, models_1.ProductModel.findOne({ _id: id }).populate({
+                                path: 'banner',
+                                select: 'path'
+                            }).exec()];
+                    case 1:
+                        product = _a.sent();
+                        res.json({
+                            code: 0,
+                            msg: 'success',
+                            data: product
+                        });
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    });
     // 产品详情
     app.get('/api/product/:id', function (req, res) {
         if (req.params.id != 0) {
@@ -550,7 +574,7 @@ function productRouter(app) {
     app.get('/api/notification/delete', function (req, res) {
         var id = new ObjectId(req.query.id);
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var item;
+            var item, unRead;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, models_1.NotificationModel.findOne({
@@ -560,9 +584,17 @@ function productRouter(app) {
                         item = _a.sent();
                         item.status = 1;
                         item.save();
+                        return [4 /*yield*/, models_1.NotificationModel.find({
+                                toUser: new ObjectId(req.query.userId),
+                                status: 0,
+                                read: 0
+                            }).exec()];
+                    case 2:
+                        unRead = _a.sent();
                         res.json({
                             code: 0,
-                            msg: 'success'
+                            msg: 'success',
+                            data: { unReadNum: unRead.length }
                         });
                         return [2 /*return*/];
                 }
@@ -573,7 +605,7 @@ function productRouter(app) {
     app.get('/api/notification/read', function (req, res) {
         var id = new ObjectId(req.query.id);
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var item;
+            var item, unRead;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, models_1.NotificationModel.findOne({
@@ -583,9 +615,17 @@ function productRouter(app) {
                         item = _a.sent();
                         item.read = 1;
                         item.save();
+                        return [4 /*yield*/, models_1.NotificationModel.find({
+                                toUser: new ObjectId(req.query.userId),
+                                status: 0,
+                                read: 0
+                            }).exec()];
+                    case 2:
+                        unRead = _a.sent();
                         res.json({
                             code: 0,
-                            msg: 'success'
+                            msg: 'success',
+                            data: { unReadNum: unRead.length - 1 }
                         });
                         return [2 /*return*/];
                 }
