@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "set NODE_ENV=production && nodemon build/app.js --exitcrash",
-    "dev": "set NODE_ENV=development && nodemon build/app.js"
+    "start": "export NODE_ENV=production&&nodemon build/app.js --exitcrash",
+    "dev": "export NODE_ENV=development&&nodemon build/app.js"
   },
   "repository": {
     "type": "git",

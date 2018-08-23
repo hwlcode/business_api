@@ -38,6 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var models_1 = require("../models");
 var conf_1 = require("../common/conf");
 var SMSClient = require("@alicloud/sms-sdk");
+var conf_2 = require("../common/conf");
 var ObjectId = require('mongodb').ObjectID;
 function productRouter(app) {
     var _this = this;
@@ -112,6 +113,11 @@ function productRouter(app) {
                             })];
                     case 1:
                         productList = _a.sent();
+                        if (productList.length > 0) {
+                            productList.map(function (obj) {
+                                obj['banner']['path'] = conf_2.appServerUrl + obj['banner']['path'];
+                            });
+                        }
                         return [4 /*yield*/, models_1.ProductModel.find()];
                     case 2:
                         products = _a.sent();
@@ -142,6 +148,9 @@ function productRouter(app) {
                             }).exec()];
                     case 1:
                         product = _a.sent();
+                        if (product != null) {
+                            product['banner']['path'] = conf_2.appServerUrl + product['banner']['path'];
+                        }
                         res.json({
                             code: 0,
                             msg: 'success',

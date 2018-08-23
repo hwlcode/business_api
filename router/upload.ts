@@ -23,7 +23,7 @@ function uploaderRouter(app) {
             var img = await Models.ImagesModel.create({
                 mimeType: file.mimetype,
                 originalName: file.originalname,
-                path: 'http://127.0.0.1:9527' + file.path.split('public')[1],
+                path: file.path.split('public')[1],
                 size: file.size
             });
 

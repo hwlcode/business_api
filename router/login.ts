@@ -1,6 +1,6 @@
 import * as SMSClient from '@alicloud/sms-sdk'
 import * as Models from '../models';
-import {accessKeyId, secretAccessKey} from '../common/conf';
+import {accessKeyId, secretAccessKey, appServerUrl} from '../common/conf';
 
 const ObjectId = require('mongodb').ObjectID;
 const md5 = require("blueimp-md5");
@@ -80,6 +80,7 @@ function loginRouter(app) {
                 await  Models.CustomModel.findOne({
                     phone: body.phone
                 }).populate(opts).exec((err, doc) => {
+                    doc['avatar']['path'] = appServerUrl + doc['avatar']['path'];
                     res.json({
                         code: 0,
                         msg: 'success',
@@ -105,10 +106,13 @@ function loginRouter(app) {
             await Models.CustomModel.findOne({
                 _id: id
             }).populate(opts).exec((err, populatedDoc) => {
-                res.json({
-                    code: 0,
-                    data: populatedDoc
-                })
+                if (populatedDoc != null) {
+                    populatedDoc['avatar']['path'] = appServerUrl + populatedDoc['avatar']['path'];
+                    res.json({
+                        code: 0,
+                        data: populatedDoc
+                    })
+                }
             });
         })();
     })

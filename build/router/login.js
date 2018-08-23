@@ -115,6 +115,7 @@ function loginRouter(app) {
                         return [4 /*yield*/, Models.CustomModel.findOne({
                                 phone: body.phone
                             }).populate(opts).exec(function (err, doc) {
+                                doc['avatar']['path'] = conf_1.appServerUrl + doc['avatar']['path'];
                                 res.json({
                                     code: 0,
                                     msg: 'success',
@@ -149,10 +150,13 @@ function loginRouter(app) {
                         return [4 /*yield*/, Models.CustomModel.findOne({
                                 _id: id
                             }).populate(opts).exec(function (err, populatedDoc) {
-                                res.json({
-                                    code: 0,
-                                    data: populatedDoc
-                                });
+                                if (populatedDoc != null) {
+                                    populatedDoc['avatar']['path'] = conf_1.appServerUrl + populatedDoc['avatar']['path'];
+                                    res.json({
+                                        code: 0,
+                                        data: populatedDoc
+                                    });
+                                }
                             })];
                     case 1:
                         _a.sent();

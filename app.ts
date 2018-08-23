@@ -24,6 +24,7 @@ app.all('*', function(req, res, next) {
     res.header("Access-Control-Allow-Headers", "Content-Type");
     next();
 });
+
 productRouter(app);
 uploaderRouter(app);
 multipleUploaderRouter(app);

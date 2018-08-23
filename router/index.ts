@@ -1,6 +1,7 @@
 import {OrderModel, CustomModel, ProductModel, NotificationModel, QuestionsModel, VersionModel} from '../models';
 import {accessKeyId, secretAccessKey} from '../common/conf';
 import * as SMSClient from '@alicloud/sms-sdk'
+import {appServerUrl} from "../common/conf";
 
 const ObjectId = require('mongodb').ObjectID;
 
@@ -53,6 +54,13 @@ function productRouter(app) {
             }).populate(opt).skip(skip).limit(limit).sort({
                 createdAt: -1
             });
+
+            if (productList.length > 0) {
+                productList.map(obj => {
+                    obj['banner']['path'] = appServerUrl + obj['banner']['path'];
+                });
+            }
+
             const products = await ProductModel.find();
             const isLast = (page * limit) >= products.length;
             res.json({
@@ -72,6 +80,10 @@ function productRouter(app) {
                 path: 'banner',
                 select: 'path'
             }).exec();
+
+            if (product != null) {
+                product['banner']['path'] = appServerUrl + product['banner']['path'];
+            }
 
             res.json({
                 code: 0,
@@ -612,9 +624,9 @@ function productRouter(app) {
         const body = req.body;
         (async () => {
             const version = await VersionModel.findOne().exec();
-            if(version == null){
+            if (version == null) {
                 await VersionModel.create(body);
-            }else{
+            } else {
                 version['versionNumber'] = body.versionNumber;
                 version['androidUrl'] = body.androidUrl;
                 version['iosUrl'] = body.iosUrl;

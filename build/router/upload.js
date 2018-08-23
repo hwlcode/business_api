@@ -62,7 +62,7 @@ function uploaderRouter(app) {
                     case 0: return [4 /*yield*/, Models.ImagesModel.create({
                             mimeType: file.mimetype,
                             originalName: file.originalname,
-                            path: 'http://127.0.0.1:9527' + file.path.split('public')[1],
+                            path: file.path.split('public')[1],
                             size: file.size
                         })];
                     case 1:
