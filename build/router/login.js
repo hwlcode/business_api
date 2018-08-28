@@ -225,7 +225,7 @@ function loginRouter(app) {
         //初始化sms_client
         var smsClient = new SMSClient({ accessKeyId: conf_1.accessKeyId, secretAccessKey: conf_1.secretAccessKey });
         //发送短信
-        console.log(phone);
+        // console.log(phone);
         smsClient.sendSMS({
             PhoneNumbers: phone,
             SignName: '广西盈垦',
