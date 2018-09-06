@@ -97,7 +97,7 @@ function uploaderAPKRouter(app) {
     app.post('/api/upload/apk', upload.single('apk'), function (req, res, next) {
         var _this = this;
         var file = req.apk;
-        // console.log(file);
+        console.log(file);
         (function () { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/];
