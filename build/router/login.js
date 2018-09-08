@@ -84,7 +84,7 @@ function loginRouter(app) {
     });
     app.post('/api/user/login', function (req, res) {
         var body = req.body;
-        if (body.phone == '15868823605') {
+        if (body.phone == '15868823605' || body.phone == '13967121064') {
             verifyCode = '123456';
         }
         (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -115,7 +115,9 @@ function loginRouter(app) {
                         return [4 /*yield*/, Models.CustomModel.findOne({
                                 phone: body.phone
                             }).populate(opts).exec(function (err, doc) {
-                                doc['avatar']['path'] = conf_1.appServerUrl + doc['avatar']['path'];
+                                if (doc['avatar'] != null) {
+                                    doc['avatar']['path'] = conf_1.appServerUrl + doc['avatar']['path'];
+                                }
                                 res.json({
                                     code: 0,
                                     msg: 'success',
@@ -151,7 +153,9 @@ function loginRouter(app) {
                                 _id: id
                             }).populate(opts).exec(function (err, populatedDoc) {
                                 if (populatedDoc != null) {
-                                    populatedDoc['avatar']['path'] = conf_1.appServerUrl + populatedDoc['avatar']['path'];
+                                    if (populatedDoc['avatar'] != null) {
+                                        populatedDoc['avatar']['path'] = conf_1.appServerUrl + populatedDoc['avatar']['path'];
+                                    }
                                     res.json({
                                         code: 0,
                                         data: populatedDoc

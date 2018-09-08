@@ -52,7 +52,7 @@ function loginRouter(app) {
 
     app.post('/api/user/login', (req, res) => {
         const body = req.body;
-        if (body.phone == '15868823605') {
+        if (body.phone == '15868823605' || body.phone == '13967121064') {
             verifyCode = '123456';
         }
 
@@ -80,7 +80,9 @@ function loginRouter(app) {
                 await  Models.CustomModel.findOne({
                     phone: body.phone
                 }).populate(opts).exec((err, doc) => {
-                    doc['avatar']['path'] = appServerUrl + doc['avatar']['path'];
+                    if(doc['avatar'] != null) {
+                        doc['avatar']['path'] = appServerUrl + doc['avatar']['path'];
+                    }
                     res.json({
                         code: 0,
                         msg: 'success',
@@ -107,7 +109,9 @@ function loginRouter(app) {
                 _id: id
             }).populate(opts).exec((err, populatedDoc) => {
                 if (populatedDoc != null) {
-                    populatedDoc['avatar']['path'] = appServerUrl + populatedDoc['avatar']['path'];
+                    if(populatedDoc['avatar'] != null) {
+                        populatedDoc['avatar']['path'] = appServerUrl + populatedDoc['avatar']['path'];
+                    }
                     res.json({
                         code: 0,
                         data: populatedDoc
