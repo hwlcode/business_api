@@ -7,7 +7,7 @@ var appid = 'wxb14d114c6ca6db1c';
 var mch_id = '1504125851';
 var notify_url = '/api/wx_pay/notify';
 var key = '0207a9d2bdd47c6775d2b0693571ab49'; // 如果得到的MD5值相同，但签名失败，可能是商户key不对
-var WxPay = (function () {
+var WxPay = /** @class */ (function () {
     function WxPay() {
     }
     /**

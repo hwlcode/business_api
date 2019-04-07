@@ -905,5 +905,126 @@ function productRouter(app) {
             });
         }); })();
     });
+    // 添加收货地址
+    app.post('/api/user/address', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+        var body, userId, address;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    body = req.body;
+                    userId = new ObjectId(body.userId);
+                    return [4 /*yield*/, models_1.AddressModel.findOne({ userId: userId }).exec()];
+                case 1:
+                    address = _a.sent();
+                    if (address == null) {
+                        body.is_default = 1;
+                    }
+                    else {
+                        body.is_default = 0;
+                    }
+                    if (!(body.id != undefined)) return [3 /*break*/, 3];
+                    return [4 /*yield*/, models_1.AddressModel.findByIdAndUpdate(body.id, body)];
+                case 2:
+                    _a.sent();
+                    return [3 /*break*/, 5];
+                case 3: return [4 /*yield*/, models_1.AddressModel.create(body)];
+                case 4:
+                    _a.sent();
+                    _a.label = 5;
+                case 5:
+                    res.json({
+                        code: 0,
+                        msg: 'success'
+                    });
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    // 获取用户收货地址列表
+    app.get('/api/user/address-list', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+        var userId, address;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    userId = new ObjectId(req.query.userId);
+                    return [4 /*yield*/, models_1.AddressModel.find({ userId: userId }).exec()];
+                case 1:
+                    address = _a.sent();
+                    res.json({
+                        code: 0,
+                        msg: 'success',
+                        data: address
+                    });
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    // 更新默认收货地址
+    app.get('/api/user/address/be-default', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+        var userId, addressId, list;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    userId = new ObjectId(req.query.userId);
+                    addressId = new ObjectId(req.query.addressId);
+                    return [4 /*yield*/, models_1.AddressModel.update({ userId: userId, is_default: 1 }, {
+                            is_default: 0
+                        }).exec()];
+                case 1:
+                    _a.sent();
+                    return [4 /*yield*/, models_1.AddressModel.update({ _id: addressId }, {
+                            is_default: 1
+                        }).exec()];
+                case 2:
+                    _a.sent();
+                    return [4 /*yield*/, models_1.AddressModel.find({ userId: userId }).exec()];
+                case 3:
+                    list = _a.sent();
+                    res.json({
+                        code: 0,
+                        msg: 'success',
+                        data: list
+                    });
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    // 删除收货地址
+    app.get('/api/user/del-address', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+        var id;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    id = new ObjectId(req.query.id);
+                    return [4 /*yield*/, models_1.AddressModel.findById(id).remove()];
+                case 1:
+                    _a.sent();
+                    res.json({
+                        code: 0,
+                        msg: 'success'
+                    });
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    // 获取用户默认收货地址
+    app.get('/api/user/default-address', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+        var userId, address;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    userId = new ObjectId(req.query.userId);
+                    return [4 /*yield*/, models_1.AddressModel.findOne({ userId: userId, is_default: 1 }).exec()];
+                case 1:
+                    address = _a.sent();
+                    res.json({
+                        code: 0,
+                        msg: 'success',
+                        data: address
+                    });
+                    return [2 /*return*/];
+            }
+        });
+    }); });
 }
 exports.productRouter = productRouter;

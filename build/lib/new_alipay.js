@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var path = require("path");
 var Alipay = require('alipay-node-sdk');
 var outTradeId = Date.now().toString();
-var NewAlipay = (function () {
+var NewAlipay = /** @class */ (function () {
     function NewAlipay() {
         /**
          *

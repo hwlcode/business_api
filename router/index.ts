@@ -1,4 +1,4 @@
-import {OrderModel, CustomModel, ProductModel, NotificationModel, QuestionsModel, VersionModel} from '../models';
+import {OrderModel, CustomModel, ProductModel, NotificationModel, QuestionsModel, VersionModel, AddressModel} from '../models';
 import {accessKeyId, secretAccessKey} from '../common/conf';
 import * as SMSClient from '@alicloud/sms-sdk'
 import {appServerUrl} from "../common/conf";
@@ -652,6 +652,85 @@ function productRouter(app) {
         })();
     });
 
+    // 添加收货地址
+    app.post('/api/user/address', async (req, res) => {
+        const body = req.body;
+        const userId = new ObjectId(body.userId);
+        const address = await AddressModel.findOne({userId: userId}).exec();
+        if(address == null){
+            body.is_default = 1;
+        } else {
+            body.is_default = 0;
+        }
+        if(body.id != undefined){
+            await AddressModel.findByIdAndUpdate(body.id, body);
+        }else{
+            await AddressModel.create(body);
+        }
+
+        res.json({
+            code: 0,
+            msg: 'success'
+        });
+    });
+
+    // 获取用户收货地址列表
+    app.get('/api/user/address-list', async(req, res) => {
+       const userId = new ObjectId(req.query.userId);
+
+       const address = await AddressModel.find({userId: userId}).exec();
+
+       res.json({
+           code: 0,
+           msg: 'success',
+           data: address
+       });
+    });
+
+    // 更新默认收货地址
+    app.get('/api/user/address/be-default', async(req, res) => {
+        const userId = new ObjectId(req.query.userId);
+        const addressId = new ObjectId(req.query.addressId);
+
+        await AddressModel.update({userId: userId, is_default: 1}, {
+            is_default : 0
+        }).exec();
+
+        await AddressModel.update({_id: addressId}, {
+            is_default : 1
+        }).exec();
+
+        const list = await AddressModel.find({userId: userId}).exec();
+
+        res.json({
+            code: 0,
+            msg: 'success',
+            data: list
+        });
+    });
+
+    // 删除收货地址
+    app.get('/api/user/del-address', async(req, res) => {
+        const id = new ObjectId(req.query.id);
+        await AddressModel.findById(id).remove();
+
+        res.json({
+            code: 0,
+            msg: 'success'
+        });
+    });
+
+    // 获取用户默认收货地址
+    app.get('/api/user/default-address', async(req, res) => {
+        const userId = new ObjectId(req.query.userId);
+        const address = await AddressModel.findOne({userId: userId, is_default: 1}).exec();
+
+        res.json({
+            code: 0,
+            msg: 'success',
+            data: address
+        });
+    });
 }
 
 export {productRouter}

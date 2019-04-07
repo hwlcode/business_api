@@ -8,7 +8,7 @@ var UserSchema = new Schema({
     sex: { type: String, default: null },
     birth: { type: String, default: null },
     phone: { type: String, default: null },
-    address: { type: String, default: null },
+    address: [{ type: Schema.Types.ObjectId, default: null, ref: 'Address' }],
     avatar: { type: Schema.Types.ObjectId, default: null, ref: 'Images' },
     orders: [{ type: Schema.Types.ObjectId, default: null, ref: 'Order' }],
     code: { type: Number, default: 0 },

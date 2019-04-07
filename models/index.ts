@@ -25,6 +25,7 @@ require('./schema/notification');
 require('./schema/admin');
 require('./schema/questions');
 require('./schema/version');
+require('./schema/address');
 
 const BannerModel = mongoose.model('Banner');
 const CustomModel = mongoose.model('User');
@@ -35,6 +36,7 @@ const NotificationModel = mongoose.model('Notification');
 const AdminModel = mongoose.model('admin');
 const QuestionsModel = mongoose.model('questions');
 const VersionModel = mongoose.model('versions');
+const AddressModel = mongoose.model('Address');
 
 export {
     BannerModel,
@@ -45,5 +47,6 @@ export {
     NotificationModel,
     AdminModel,
     QuestionsModel,
-    VersionModel
+    VersionModel,
+    AddressModel
 }
