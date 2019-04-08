@@ -343,9 +343,11 @@ function productRouter(app) {
     // 订单详情
     app.get('/api/order/:id', function (req, res) {
         var id = new ObjectId(req.params.id);
-        var opt = {
-            path: 'customer'
-        };
+        var opt = [{
+                path: 'customer'
+            }, {
+                path: 'address'
+            }];
         (function () { return __awaiter(_this, void 0, void 0, function () {
             var order;
             return __generator(this, function (_a) {
@@ -364,6 +366,25 @@ function productRouter(app) {
             });
         }); })();
     });
+    // 修改订单收货地址
+    app.get('/api/order/change-address/:sn/:id', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+        var id, sn;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    id = new ObjectId(req.params.id);
+                    sn = new ObjectId(req.params.sn);
+                    return [4 /*yield*/, models_1.OrderModel.findByIdAndUpdate(sn, { address: id }).exec()];
+                case 1:
+                    _a.sent();
+                    res.json({
+                        code: 0,
+                        msg: 'success'
+                    });
+                    return [2 /*return*/];
+            }
+        });
+    }); });
     // 删除订单
     app.get('/api/order/del/:id', function (req, res) {
         var id = new ObjectId(req.params.id);

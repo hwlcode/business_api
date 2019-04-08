@@ -9,7 +9,8 @@ let OrderSchema = new Schema({
     status: {type: Number, default: 0}, // 0：初始状态  1：己支付  2：己发货
     customer: { type: Schema.Types.ObjectId, ref: 'User'},
     type: {type: Number, default: 0},
-    payway: {type: Number, default: 0} // 0：支付宝 1：微信支付
+    payway: {type: Number, default: 0}, // 0：支付宝 1：微信支付
+    address: { type: Schema.Types.ObjectId, ref: 'Address'}
 }, {
     timestamps: true
 });

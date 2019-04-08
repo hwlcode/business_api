@@ -227,9 +227,11 @@ function productRouter(app) {
     // 订单详情
     app.get('/api/order/:id', (req, res) => {
         let id = new ObjectId(req.params.id);
-        let opt = {
+        let opt = [{
             path: 'customer'
-        };
+        },{
+            path: 'address'
+        }];
         (async () => {
             let order = await OrderModel.find({
                 _id: id
@@ -241,6 +243,18 @@ function productRouter(app) {
             })
         })();
     });
+    // 修改订单收货地址
+    app.get('/api/order/change-address/:sn/:id', async(req, res) => {
+        const id  =  new ObjectId(req.params.id);
+        const sn = new ObjectId(req.params.sn);
+        await OrderModel.findByIdAndUpdate(sn, {address: id}).exec();
+
+        res.json({
+            code: 0,
+            msg: 'success'
+        });
+    });
+
     // 删除订单
     app.get('/api/order/del/:id', (req, res) => {
         let id = new ObjectId(req.params.id);
