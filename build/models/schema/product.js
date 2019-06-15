@@ -8,7 +8,10 @@ var ProductSchema = new Schema({
     unit: { type: String, default: '' },
     banner: { type: Schema.Types.ObjectId, ref: 'Images' },
     code: { type: Number, default: 0 },
-    desc: { type: String }
+    desc: { type: String },
+    pro_status: { type: String, default: '0' },
+    origin_price: { type: String },
+    origin_price_unit: { type: String }
 }, {
     timestamps: true
 });

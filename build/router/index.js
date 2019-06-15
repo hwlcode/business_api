@@ -39,6 +39,8 @@ var models_1 = require("../models");
 var conf_1 = require("../common/conf");
 var SMSClient = require("@alicloud/sms-sdk");
 var conf_2 = require("../common/conf");
+var wx_pay_1 = require("../lib/wx_pay");
+var wxPay = new wx_pay_1.WxPay();
 var ObjectId = require('mongodb').ObjectID;
 function productRouter(app) {
     var _this = this;
@@ -107,7 +109,8 @@ function productRouter(app) {
                             select: 'path'
                         };
                         return [4 /*yield*/, models_1.ProductModel.find({
-                                name: pattern
+                                name: pattern,
+                                pro_status: 0
                             }).populate(opt).skip(skip).limit(limit).sort({
                                 createdAt: -1
                             })];
@@ -203,7 +206,10 @@ function productRouter(app) {
                                     unit: body.unit,
                                     banner: body.banner,
                                     code: body.code,
-                                    desc: body.desc
+                                    desc: body.desc,
+                                    pro_status: body.pro_status,
+                                    origin_price: body.origin_price,
+                                    origin_price_unit: body.origin_price_unit
                                 }
                             }).exec()];
                         case 1:
@@ -225,7 +231,9 @@ function productRouter(app) {
             var opt, productList;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, models_1.ProductModel.findOne({ _id: id }).remove()];
+                    case 0: return [4 /*yield*/, models_1.ProductModel.findByIdAndUpdate(id, {
+                            pro_status: 1000
+                        })];
                     case 1:
                         _a.sent();
                         opt = {
@@ -252,7 +260,7 @@ function productRouter(app) {
         var body = {};
         body['products'] = req.query.products;
         body['sumPrice'] = req.query.sumPrice;
-        body['customer'] = req.query.customer;
+        body['customer'] = req.query.customer; // 下单用户_id
         body['sn'] = 'YK' + new Date().getTime();
         (function () { return __awaiter(_this, void 0, void 0, function () {
             var order;
@@ -290,11 +298,15 @@ function productRouter(app) {
                         // app
                         id = new ObjectId(req.query.id);
                         return [4 /*yield*/, models_1.OrderModel.find({
-                                customer: id
+                                customer: id,
+                                status: { $lt: 1000 }
                             }).skip(skip).limit(limit).sort({ createdAt: -1 }).exec()];
                     case 1:
                         orders = _a.sent();
-                        return [4 /*yield*/, models_1.OrderModel.find()];
+                        return [4 /*yield*/, models_1.OrderModel.find({
+                                customer: id,
+                                status: { $lt: 1000 }
+                            })];
                     case 2:
                         allOrders = _a.sent();
                         total = allOrders.length;
@@ -302,20 +314,19 @@ function productRouter(app) {
                     case 3:
                         if (!(keywords == null)) return [3 /*break*/, 6];
                         return [4 /*yield*/, models_1.OrderModel.find({
-                                status: { $gte: 1 }
+                            // status: {$gte: 1}
                             }).skip(skip).limit(limit).sort({ createdAt: -1, status: -1 }).exec()];
                     case 4:
                         // 列表
                         orders = _a.sent();
                         return [4 /*yield*/, models_1.OrderModel.find({
-                                status: { $gte: 1 }
+                            // status: {$gte: 1}
                             }).count()];
                     case 5:
                         total = _a.sent();
                         return [3 /*break*/, 9];
                     case 6: return [4 /*yield*/, models_1.OrderModel.find({
                             sn: new RegExp(keywords, 'i'),
-                            status: { $gte: 1 }
                         }).skip(skip).limit(limit).sort({ createdAt: -1, status: -1 }).exec()];
                     case 7:
                         // 测试jenkins
@@ -323,7 +334,6 @@ function productRouter(app) {
                         orders = _a.sent();
                         return [4 /*yield*/, models_1.OrderModel.find({
                                 sn: new RegExp(keywords, 'i'),
-                                status: { $gte: 1 }
                             }).count()];
                     case 8:
                         total = _a.sent();
@@ -344,8 +354,6 @@ function productRouter(app) {
     app.get('/api/order/:id', function (req, res) {
         var id = new ObjectId(req.params.id);
         var opt = [{
-                path: 'customer'
-            }, {
                 path: 'address'
             }];
         (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -389,16 +397,30 @@ function productRouter(app) {
     app.get('/api/order/del/:id', function (req, res) {
         var id = new ObjectId(req.params.id);
         (function () { return __awaiter(_this, void 0, void 0, function () {
+            var order;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, models_1.OrderModel.findOne({ _id: id }).remove()];
+                    case 0: return [4 /*yield*/, models_1.OrderModel.findOne({ _id: id }).exec()];
                     case 1:
+                        order = _a.sent();
+                        if (!(order['status'] == 0)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, models_1.OrderModel.findByIdAndUpdate(id, {
+                                status: 1000
+                            }).exec()];
+                    case 2:
                         _a.sent();
                         res.json({
                             code: 0,
                             msg: 'success'
                         });
-                        return [2 /*return*/];
+                        return [3 /*break*/, 4];
+                    case 3:
+                        res.json({
+                            code: 1000,
+                            msg: '删除失败，订单正在交易状态！'
+                        });
+                        _a.label = 4;
+                    case 4: return [2 /*return*/];
                 }
             });
         }); })();
@@ -408,7 +430,7 @@ function productRouter(app) {
         var id = req.params['id'];
         var payWay = req.params['payway'];
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var order;
+            var order, out_trade_no;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, models_1.OrderModel.findOne({
@@ -416,24 +438,21 @@ function productRouter(app) {
                         }).exec()];
                     case 1:
                         order = _a.sent();
-                        // 更改为己发货状态
+                        // 更改为己付款
                         order['status'] = 1;
                         order['payway'] = payWay;
-                        order.save();
-                        // let code = order.sumPrice;
-                        // let customer = order.customer;
-                        // let user: any = await UserModel.findOne({
-                        //     _id: new ObjectId(customer)
-                        // }).exec();
-                        // // 更改用户积分
-                        // user.code += code;
-                        // user.save();
-                        //发送通知
-                        // await NotificationModel.create({
-                        //     content: '您的订单：' + order.sn + ' 己经生成，我们会尽快为您发货！非常感谢您的订购，祝生活愉快！',
-                        //     fromUser: customer, //后面改成管理员的Id
-                        //     toUser: customer
-                        // });
+                        return [4 /*yield*/, order.save()];
+                    case 2:
+                        _a.sent();
+                        // 查询成功付款的的支付时间
+                        if (payWay == 1) {
+                            out_trade_no = order['sn'];
+                            wxPay.queryOrder(out_trade_no).then(function (json) {
+                                order['transaction_id'] = json['transaction_id'];
+                                order['wx_time_end'] = json['wx_time_end'];
+                                order.save();
+                            });
+                        }
                         res.json({
                             code: 0,
                             msg: 'success'

@@ -1,10 +1,19 @@
-import {OrderModel, CustomModel, ProductModel, NotificationModel, QuestionsModel, VersionModel, AddressModel} from '../models';
+import {
+    OrderModel,
+    CustomModel,
+    ProductModel,
+    NotificationModel,
+    QuestionsModel,
+    VersionModel,
+    AddressModel
+} from '../models';
 import {accessKeyId, secretAccessKey} from '../common/conf';
 import * as SMSClient from '@alicloud/sms-sdk'
 import {appServerUrl} from "../common/conf";
+import {WxPay} from '../lib/wx_pay';
 
+let wxPay = new WxPay();
 const ObjectId = require('mongodb').ObjectID;
-
 
 function productRouter(app) {
     // 创建商品
@@ -50,7 +59,8 @@ function productRouter(app) {
                 select: 'path'
             };
             const productList = await ProductModel.find({
-                name: pattern
+                name: pattern,
+                pro_status: 0
             }).populate(opt).skip(skip).limit(limit).sort({
                 createdAt: -1
             });
@@ -124,7 +134,10 @@ function productRouter(app) {
                         unit: body.unit,
                         banner: body.banner,
                         code: body.code,
-                        desc: body.desc
+                        desc: body.desc,
+                        pro_status: body.pro_status,
+                        origin_price: body.origin_price,
+                        origin_price_unit: body.origin_price_unit
                     }
                 }).exec();
 
@@ -138,7 +151,9 @@ function productRouter(app) {
     app.get('/api/delete/:id', (req, res) => {
         let id = new ObjectId(req.params.id);
         (async () => {
-            await ProductModel.findOne({_id: id}).remove();
+            await ProductModel.findByIdAndUpdate(id, {
+                pro_status: 1000
+            });
             let opt = {
                 path: 'banner',
                 select: 'path'
@@ -160,7 +175,7 @@ function productRouter(app) {
         let body = {};
         body['products'] = req.query.products;
         body['sumPrice'] = req.query.sumPrice;
-        body['customer'] = req.query.customer;
+        body['customer'] = req.query.customer;  // 下单用户_id
         body['sn'] = 'YK' + new Date().getTime();
         (async () => {
             let order = await OrderModel.create(body);
@@ -187,30 +202,34 @@ function productRouter(app) {
                 // app
                 id = new ObjectId(req.query.id);
                 orders = await OrderModel.find({
-                    customer: id
+                    customer: id,
+                    status: {$lt: 1000}
                 }).skip(skip).limit(limit).sort({createdAt: -1}).exec();
-                let allOrders = await OrderModel.find();
+                let allOrders = await OrderModel.find({
+                    customer: id,
+                    status: {$lt: 1000}
+                });
                 total = allOrders.length;
             } else {
                 // admin 后台
                 if (keywords == null) {
                     // 列表
                     orders = await OrderModel.find({
-                        status: {$gte: 1}
+                        // status: {$gte: 1}
                     }).skip(skip).limit(limit).sort({createdAt: -1, status: -1}).exec();
                     total = await OrderModel.find({
-                        status: {$gte: 1}
+                        // status: {$gte: 1}
                     }).count();
                 } else {
                     // 测试jenkins
                     // search
                     orders = await OrderModel.find({
                         sn: new RegExp(keywords, 'i'),
-                        status: {$gte: 1}
+                        // status: {$gte: 1}
                     }).skip(skip).limit(limit).sort({createdAt: -1, status: -1}).exec();
                     total = await OrderModel.find({
                         sn: new RegExp(keywords, 'i'),
-                        status: {$gte: 1}
+                        // status: {$gte: 1}
                     }).count();
                 }
 
@@ -228,8 +247,6 @@ function productRouter(app) {
     app.get('/api/order/:id', (req, res) => {
         let id = new ObjectId(req.params.id);
         let opt = [{
-            path: 'customer'
-        },{
             path: 'address'
         }];
         (async () => {
@@ -244,8 +261,8 @@ function productRouter(app) {
         })();
     });
     // 修改订单收货地址
-    app.get('/api/order/change-address/:sn/:id', async(req, res) => {
-        const id  =  new ObjectId(req.params.id);
+    app.get('/api/order/change-address/:sn/:id', async (req, res) => {
+        const id = new ObjectId(req.params.id);
         const sn = new ObjectId(req.params.sn);
         await OrderModel.findByIdAndUpdate(sn, {address: id}).exec();
 
@@ -259,11 +276,22 @@ function productRouter(app) {
     app.get('/api/order/del/:id', (req, res) => {
         let id = new ObjectId(req.params.id);
         (async () => {
-            await OrderModel.findOne({_id: id}).remove();
-            res.json({
-                code: 0,
-                msg: 'success'
-            })
+            let order = await OrderModel.findOne({_id: id}).exec();
+            if (order['status'] == 0) {
+                await OrderModel.findByIdAndUpdate(id, {
+                    status: 1000
+                }).exec();
+
+                res.json({
+                    code: 0,
+                    msg: 'success'
+                });
+            } else {
+                res.json({
+                    code: 1000,
+                    msg: '删除失败，订单正在交易状态！'
+                });
+            }
         })();
     });
     // 更改为己付款
@@ -275,26 +303,22 @@ function productRouter(app) {
             let order = await OrderModel.findOne({
                 _id: new ObjectId(id)
             }).exec();
-            // 更改为己发货状态
+            // 更改为己付款
             order['status'] = 1;
             order['payway'] = payWay;
-            order.save();
+            await order.save();
 
-            // let code = order.sumPrice;
-            // let customer = order.customer;
-            // let user: any = await UserModel.findOne({
-            //     _id: new ObjectId(customer)
-            // }).exec();
-            // // 更改用户积分
-            // user.code += code;
-            // user.save();
-
-            //发送通知
-            // await NotificationModel.create({
-            //     content: '您的订单：' + order.sn + ' 己经生成，我们会尽快为您发货！非常感谢您的订购，祝生活愉快！',
-            //     fromUser: customer, //后面改成管理员的Id
-            //     toUser: customer
-            // });
+            // 查询成功付款的的支付时间
+            if (payWay == 1) {
+                let out_trade_no = order['sn'];
+                wxPay.queryOrder(out_trade_no).then(
+                    json => {
+                        order['transaction_id'] = json['transaction_id'];
+                        order['wx_time_end'] = json['wx_time_end'];
+                        order.save();
+                    }
+                );
+            }
 
             res.json({
                 code: 0,
@@ -314,7 +338,7 @@ function productRouter(app) {
             order.status = 2;
             order.save();
 
-            let customer = order.customer;
+            let customer = order.customer; // 下单用户id
             let user: any = await CustomModel.findOne({
                 _id: new ObjectId(customer)
             }).exec();
@@ -671,14 +695,14 @@ function productRouter(app) {
         const body = req.body;
         const userId = new ObjectId(body.userId);
         const address = await AddressModel.findOne({userId: userId}).exec();
-        if(address == null){
+        if (address == null) {
             body.is_default = 1;
         } else {
             body.is_default = 0;
         }
-        if(body.id != undefined){
+        if (body.id != undefined) {
             await AddressModel.findByIdAndUpdate(body.id, body);
-        }else{
+        } else {
             await AddressModel.create(body);
         }
 
@@ -689,29 +713,29 @@ function productRouter(app) {
     });
 
     // 获取用户收货地址列表
-    app.get('/api/user/address-list', async(req, res) => {
-       const userId = new ObjectId(req.query.userId);
+    app.get('/api/user/address-list', async (req, res) => {
+        const userId = new ObjectId(req.query.userId);
 
-       const address = await AddressModel.find({userId: userId}).exec();
+        const address = await AddressModel.find({userId: userId}).exec();
 
-       res.json({
-           code: 0,
-           msg: 'success',
-           data: address
-       });
+        res.json({
+            code: 0,
+            msg: 'success',
+            data: address
+        });
     });
 
     // 更新默认收货地址
-    app.get('/api/user/address/be-default', async(req, res) => {
+    app.get('/api/user/address/be-default', async (req, res) => {
         const userId = new ObjectId(req.query.userId);
         const addressId = new ObjectId(req.query.addressId);
 
         await AddressModel.update({userId: userId, is_default: 1}, {
-            is_default : 0
+            is_default: 0
         }).exec();
 
         await AddressModel.update({_id: addressId}, {
-            is_default : 1
+            is_default: 1
         }).exec();
 
         const list = await AddressModel.find({userId: userId}).exec();
@@ -724,7 +748,7 @@ function productRouter(app) {
     });
 
     // 删除收货地址
-    app.get('/api/user/del-address', async(req, res) => {
+    app.get('/api/user/del-address', async (req, res) => {
         const id = new ObjectId(req.query.id);
         await AddressModel.findById(id).remove();
 
@@ -735,7 +759,7 @@ function productRouter(app) {
     });
 
     // 获取用户默认收货地址
-    app.get('/api/user/default-address', async(req, res) => {
+    app.get('/api/user/default-address', async (req, res) => {
         const userId = new ObjectId(req.query.userId);
         const address = await AddressModel.findOne({userId: userId, is_default: 1}).exec();
 

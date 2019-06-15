@@ -62,5 +62,29 @@ function wxpay(app) {
             });
         }); })();
     });
+    // 查询成功付款的的支付时间
+    app.get('/api/wx_pay/:out_trade_no', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+        var _this = this;
+        var out_trade_no;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    out_trade_no = req.params.out_trade_no;
+                    return [4 /*yield*/, wxPay.queryOrder(out_trade_no).then(function (json) { return __awaiter(_this, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                // 更改订单信息
+                                res.json({
+                                    code: 0,
+                                    msg: 'success'
+                                });
+                                return [2 /*return*/];
+                            });
+                        }); })];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    }); });
 }
 exports.wxpay = wxpay;

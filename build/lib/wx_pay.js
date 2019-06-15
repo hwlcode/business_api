@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var models_1 = require("../models");
 var rp = require('request-promise');
 var crypto = require('crypto');
 var xmlreader = require('xmlreader');
@@ -27,9 +28,9 @@ var WxPay = /** @class */ (function () {
             noncestr: nonceStr,
             package: "Sign=WXPay" // 这里一定要是这上 app支付必须写死
         };
-        // console.log(ret);
+        // 第一步：对参数按照key=value的格式;
         var string = this.raw(ret);
-        // console.log(string);
+        // 第二步：拼接API密钥：
         string = string + '&key=' + key;
         var sign = crypto.createHash('md5').update(string, 'utf8').digest('hex');
         return sign.toUpperCase();
@@ -161,6 +162,84 @@ var WxPay = /** @class */ (function () {
         }
         string = string.substr(1);
         return string;
+    };
+    /**
+     * 订单查询
+     * @param out_trade_no 商户订单号
+     * @param nonce_str 随机字符串
+     * @param sign 签名
+     * @returns {string}
+     */
+    WxPay.prototype.queryOrder = function (out_trade_no) {
+        var url = 'https://api.mch.weixin.qq.com/pay/orderquery';
+        var nonce_str = this.createNonceStr();
+        var sign = this.queryOrderSign(out_trade_no, nonce_str);
+        return new Promise(function (resolve, reject) {
+            var formData = "<xml>";
+            formData += "<appid>" + appid + "</appid>"; // 应用APPID
+            formData += "<mch_id>" + mch_id + "</mch_id>"; // 商户号
+            formData += "<out_trade_no>" + out_trade_no + "</out_trade_no>"; // 商户订单号
+            formData += "<nonce_str>" + nonce_str + "</nonce_str>"; // 随机字符串。
+            formData += "<sign>" + sign + "</sign>"; // 签名
+            formData += "</xml>";
+            rp({
+                url: url,
+                method: 'POST',
+                body: formData
+            }).then(function (parsedBody) {
+                xmlreader.read(parsedBody, function (err, res) {
+                    if (err)
+                        return console.log(err);
+                    // console.log(parsedBody);
+                    // let date = res.xml.time_end.text();
+                    // date = date.slice(0, 4) + '-' + date.slice(4, 6) + '-' + date.slice(6, 8) + ' ' + date.slice(8, 10) + ':' + date.slice(10, 12) + ':' + date.slice(12, 14);
+                    var args = {
+                        trade_state: res.xml.trade_state.text(),
+                        total_fee: res.xml.total_fee.text(),
+                        fee_type: res.xml.fee_type.text(),
+                        transaction_id: res.xml.transaction_id.text(),
+                        out_trade_no: res.xml.out_trade_no.text(),
+                        time_end: res.xml.time_end.text(),
+                        trade_state_desc: res.xml.trade_state_desc.text()
+                    };
+                    models_1.OrderModel.findOneAndUpdate({ 'sn': out_trade_no }, {
+                        $set: {
+                            wx_time_end: args['time_end'],
+                            transaction_id: args['transaction_id']
+                        }
+                    }, {
+                        new: true
+                    }, function (err, data) {
+                        console.log(data);
+                    });
+                    resolve(args);
+                });
+            }).catch(function (err) {
+                reject(err);
+            });
+        });
+    };
+    /**
+     * 订单查询签名
+     * @param out_trade_no
+     * @param nonceStr
+     * @returns {string}
+     */
+    WxPay.prototype.queryOrderSign = function (out_trade_no, nonceStr) {
+        // 签名
+        var ret = {
+            appid: appid,
+            mch_id: mch_id,
+            out_trade_no: out_trade_no,
+            nonce_str: nonceStr
+        };
+        // console.log(ret);
+        var string = this.raw(ret);
+        // console.log(string);
+        string = string + '&key=' + key;
+        // console.log(string);
+        var sign = crypto.createHash('md5').update(string, 'utf8').digest('hex');
+        return sign.toUpperCase();
     };
     return WxPay;
 }());
