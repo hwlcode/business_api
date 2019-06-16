@@ -851,7 +851,7 @@ function productRouter(app) {
                                 _id: id
                             }).populate({
                                 path: 'files'
-                            }).exec()];
+                            }).sort({ status: -1 }).exec()];
                     case 1:
                         question = _a.sent();
                         res.json({
