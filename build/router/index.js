@@ -289,7 +289,7 @@ function productRouter(app) {
         var skip = (page - 1) * limit;
         var keywords = req.query.keywords || '';
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var total, allOrders;
+            var total, allOrders, allOrders, allOrders;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -319,11 +319,10 @@ function productRouter(app) {
                     case 4:
                         // 列表
                         orders = _a.sent();
-                        return [4 /*yield*/, models_1.OrderModel.find({
-                            // status: {$gte: 1}
-                            }).count()];
+                        return [4 /*yield*/, models_1.OrderModel.find().exec()];
                     case 5:
-                        total = _a.sent();
+                        allOrders = _a.sent();
+                        total = allOrders.length;
                         return [3 /*break*/, 9];
                     case 6: return [4 /*yield*/, models_1.OrderModel.find({
                             sn: new RegExp(keywords, 'i'),
@@ -334,9 +333,10 @@ function productRouter(app) {
                         orders = _a.sent();
                         return [4 /*yield*/, models_1.OrderModel.find({
                                 sn: new RegExp(keywords, 'i'),
-                            }).count()];
+                            }).exec()];
                     case 8:
-                        total = _a.sent();
+                        allOrders = _a.sent();
+                        total = allOrders.length;
                         _a.label = 9;
                     case 9:
                         res.json({

@@ -217,9 +217,8 @@ function productRouter(app) {
                     orders = await OrderModel.find({
                         // status: {$gte: 1}
                     }).skip(skip).limit(limit).sort({createdAt: -1, status: -1}).exec();
-                    total = await OrderModel.find({
-                        // status: {$gte: 1}
-                    }).count();
+                    let allOrders = await OrderModel.find().exec();
+                    total = allOrders.length;
                 } else {
                     // 测试jenkins
                     // search
@@ -227,10 +226,11 @@ function productRouter(app) {
                         sn: new RegExp(keywords, 'i'),
                         // status: {$gte: 1}
                     }).skip(skip).limit(limit).sort({createdAt: -1, status: -1}).exec();
-                    total = await OrderModel.find({
+                    let allOrders = await OrderModel.find({
                         sn: new RegExp(keywords, 'i'),
                         // status: {$gte: 1}
-                    }).count();
+                    }).exec();
+                    total = allOrders.length;
                 }
 
             }
