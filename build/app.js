@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express = require("express");
 var path = require("path");
 var bodyParser = require("body-parser");
+var fs = require("fs");
+var morgan = require("morgan");
 var router_1 = require("./router");
 var upload_1 = require("./router/upload");
 var banner_1 = require("./router/banner");
@@ -16,6 +18,11 @@ var app = express();
 app.use('/', express.static(path.join(__dirname, '..', 'public'))); //静态资源存放目录
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+// log all requests
+app.use(morgan('common', {
+    skip: function (req, res) { return res.statusCode < 400; },
+    stream: fs.createWriteStream(path.join(__dirname, '..', 'access.log'), { flags: 'a' })
+}));
 //router
 app.all('*', function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
