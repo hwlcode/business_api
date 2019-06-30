@@ -504,6 +504,12 @@ function productRouter(app) {
     app.get('/api/dashboard', (req, res) => {
         (async () => {
             let product_sun = await ProductModel.find().count();
+            let product_0_sun = await ProductModel.find({
+                pro_status: 0
+            }).count();
+            let product_1_sun = await ProductModel.find({
+                pro_status: 1
+            }).count();
 
             let order_sun = await  OrderModel.find().count();
 
@@ -520,6 +526,9 @@ function productRouter(app) {
             let order_status_1 = await  OrderModel.find({
                 status: 1
             }).count();
+            let order_status_0 = await  OrderModel.find({
+                status: 0
+            }).count();
 
             let user_sun = await CustomModel.find().count();
             let user_today = await CustomModel.find({
@@ -532,12 +541,15 @@ function productRouter(app) {
             res.json({
                 code: 0,
                 data: {
-                    product_sun: product_sun,
-                    order_sun: order_sun,
-                    order_today: order_today,
-                    order_status_1: order_status_1,
-                    user_sun: user_sun,
-                    user_today: user_today
+                    product_sun: product_sun, // 产品总数
+                    product_0_sun: product_0_sun,
+                    product_1_sun: product_1_sun,
+                    order_sun: order_sun, // 订单总数
+                    order_today: order_today, // 今日新增订单
+                    order_status_0: order_status_0, // 待付款订单
+                    order_status_1: order_status_1, // 己支付，待发货订单
+                    user_sun: user_sun, // 用户总数
+                    user_today: user_today // 今日新增用户
                 }
             })
         })();

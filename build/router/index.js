@@ -684,14 +684,24 @@ function productRouter(app) {
     // 后台首页
     app.get('/api/dashboard', function (req, res) {
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var product_sun, order_sun, year, month, day, order_today, order_status_1, user_sun, user_today;
+            var product_sun, product_0_sun, product_1_sun, order_sun, year, month, day, order_today, order_status_1, order_status_0, user_sun, user_today;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, models_1.ProductModel.find().count()];
                     case 1:
                         product_sun = _a.sent();
-                        return [4 /*yield*/, models_1.OrderModel.find().count()];
+                        return [4 /*yield*/, models_1.ProductModel.find({
+                                pro_status: 0
+                            }).count()];
                     case 2:
+                        product_0_sun = _a.sent();
+                        return [4 /*yield*/, models_1.ProductModel.find({
+                                pro_status: 1
+                            }).count()];
+                    case 3:
+                        product_1_sun = _a.sent();
+                        return [4 /*yield*/, models_1.OrderModel.find().count()];
+                    case 4:
                         order_sun = _a.sent();
                         year = new Date().getFullYear();
                         month = new Date().getMonth() + 1;
@@ -702,15 +712,20 @@ function productRouter(app) {
                                     $lt: new Date(year + '-' + month + '-' + day + ' 23:59:59')
                                 }
                             }).count()];
-                    case 3:
+                    case 5:
                         order_today = _a.sent();
                         return [4 /*yield*/, models_1.OrderModel.find({
                                 status: 1
                             }).count()];
-                    case 4:
+                    case 6:
                         order_status_1 = _a.sent();
+                        return [4 /*yield*/, models_1.OrderModel.find({
+                                status: 0
+                            }).count()];
+                    case 7:
+                        order_status_0 = _a.sent();
                         return [4 /*yield*/, models_1.CustomModel.find().count()];
-                    case 5:
+                    case 8:
                         user_sun = _a.sent();
                         return [4 /*yield*/, models_1.CustomModel.find({
                                 createdAt: {
@@ -718,17 +733,20 @@ function productRouter(app) {
                                     $lt: new Date(year + '-' + month + '-' + day + ' 23:59:59')
                                 }
                             }).count()];
-                    case 6:
+                    case 9:
                         user_today = _a.sent();
                         res.json({
                             code: 0,
                             data: {
                                 product_sun: product_sun,
+                                product_0_sun: product_0_sun,
+                                product_1_sun: product_1_sun,
                                 order_sun: order_sun,
                                 order_today: order_today,
+                                order_status_0: order_status_0,
                                 order_status_1: order_status_1,
                                 user_sun: user_sun,
-                                user_today: user_today
+                                user_today: user_today // 今日新增用户
                             }
                         });
                         return [2 /*return*/];
