@@ -125,13 +125,6 @@ function productRouter(app) {
                     case 2:
                         products = _a.sent();
                         isLast = (page * limit) >= products.length;
-                        console.log({
-                            code: 0,
-                            msg: 'success',
-                            total: products.length,
-                            data: productList,
-                            isLast: isLast
-                        });
                         res.json({
                             code: 0,
                             msg: 'success',

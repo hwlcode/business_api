@@ -73,13 +73,6 @@ function productRouter(app) {
 
             const products = await ProductModel.find({pro_status: 0});
             const isLast = (page * limit) >= products.length;
-            console.log({
-                code: 0,
-                msg: 'success',
-                total: products.length,
-                data: productList,
-                isLast: isLast
-            });
             res.json({
                 code: 0,
                 msg: 'success',
