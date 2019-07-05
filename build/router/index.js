@@ -14,8 +14,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
         while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
                 case 0: case 1: t = op; break;
                 case 4: _.label++; return { value: op[1], done: false };
@@ -121,10 +121,17 @@ function productRouter(app) {
                                 obj['banner']['path'] = conf_2.appServerUrl + obj['banner']['path'];
                             });
                         }
-                        return [4 /*yield*/, models_1.ProductModel.find()];
+                        return [4 /*yield*/, models_1.ProductModel.find({ pro_status: 0 })];
                     case 2:
                         products = _a.sent();
                         isLast = (page * limit) >= products.length;
+                        console.log({
+                            code: 0,
+                            msg: 'success',
+                            total: products.length,
+                            data: productList,
+                            isLast: isLast
+                        });
                         res.json({
                             code: 0,
                             msg: 'success',

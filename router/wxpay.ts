@@ -37,7 +37,8 @@ function wxpay(app) {
                 // 更改订单信息
                 res.json({
                     code: 0,
-                    msg: 'success'
+                    msg: 'success',
+                    data: json
                 });
             });
     });
