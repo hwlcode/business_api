@@ -9,7 +9,11 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 (mongoose as any).Promise = global.Promise;
-mongoose.connect(db, {useNewUrlParser: true}, err => {
+// mongoose.set('useNewUrlParser', true);
+// mongoose.set('useMongoClient', true);
+// mongoose.set('useFindAndModify', false);
+// mongoose.set('useCreateIndex', true);
+mongoose.connect(db, err => {
     if (err) {
         console.log('connect to %s error: ', db, err.message);
         process.exit(1);

@@ -10,7 +10,11 @@ else {
     db = 'mongodb://127.0.0.1:27017/aniu';
 }
 mongoose.Promise = global.Promise;
-mongoose.connect(db, { useNewUrlParser: true }, function (err) {
+// mongoose.set('useNewUrlParser', true);
+// mongoose.set('useMongoClient', true);
+// mongoose.set('useFindAndModify', false);
+// mongoose.set('useCreateIndex', true);
+mongoose.connect(db, function (err) {
     if (err) {
         console.log('connect to %s error: ', db, err.message);
         process.exit(1);
