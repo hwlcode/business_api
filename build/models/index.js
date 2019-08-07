@@ -10,7 +10,7 @@ else {
     db = 'mongodb://127.0.0.1:27017/aniu';
 }
 mongoose.Promise = global.Promise;
-mongoose.connect(db, function (err) {
+mongoose.connect(db, { useMongoClient: true }, function (err) {
     if (err) {
         console.log('connect to %s error: ', db, err.message);
         process.exit(1);
