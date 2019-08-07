@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 (mongoose as any).Promise = global.Promise;
-mongoose.connect(db, {useMongoClient: true}, err => {
+mongoose.connect(db, err => {
     if (err) {
         console.log('connect to %s error: ', db, err.message);
         process.exit(1);
