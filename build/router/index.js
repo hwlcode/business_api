@@ -74,7 +74,7 @@ function productRouter(app) {
                             select: 'path'
                         };
                         return [4 /*yield*/, models_1.ProductModel.find().populate(opt).skip(skip).limit(limit).sort({
-                                createdAt: -1
+                                order_index: -1
                             })];
                     case 1:
                         productList = _a.sent();
@@ -92,7 +92,7 @@ function productRouter(app) {
             });
         }); })();
     });
-    // 后台商品列表
+    // 后台商品列表（弃用）
     app.get('/api/products/list', function (req, res) {
         var keywords = req.query.keywords || '';
         var pattern = new RegExp(keywords, "i");
@@ -112,7 +112,7 @@ function productRouter(app) {
                                 name: pattern,
                                 pro_status: 0
                             }).populate(opt).skip(skip).limit(limit).sort({
-                                createdAt: -1
+                                order_index: -1
                             })];
                     case 1:
                         productList = _a.sent();
@@ -209,7 +209,8 @@ function productRouter(app) {
                                     desc: body.desc,
                                     pro_status: body.pro_status,
                                     origin_price: body.origin_price,
-                                    origin_price_unit: body.origin_price_unit
+                                    origin_price_unit: body.origin_price_unit,
+                                    order_index: body.order_index
                                 }
                             }).exec()];
                         case 1:

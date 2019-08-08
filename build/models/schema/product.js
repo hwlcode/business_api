@@ -11,7 +11,8 @@ var ProductSchema = new Schema({
     desc: { type: String },
     pro_status: { type: String, default: '0' },
     origin_price: { type: String },
-    origin_price_unit: { type: String }
+    origin_price_unit: { type: String },
+    order_index: { type: Number, default: 1 }
 }, {
     timestamps: true
 });

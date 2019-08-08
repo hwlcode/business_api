@@ -3,6 +3,8 @@
 package-lock.json
 # node_modules
 public/uploads/*
+public/apk/*
+public/hotcode/*
 /common
 access.log
 

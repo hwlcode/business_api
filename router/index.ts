@@ -35,7 +35,7 @@ function productRouter(app) {
                 select: 'path'
             };
             const productList = await ProductModel.find().populate(opt).skip(skip).limit(limit).sort({
-                createdAt: -1
+                order_index: -1
             });
             const products = await ProductModel.find();
             res.json({
@@ -46,7 +46,7 @@ function productRouter(app) {
             });
         })();
     });
-    // 后台商品列表
+    // 后台商品列表（弃用）
     app.get('/api/products/list', (req, res) => {
         let keywords = req.query.keywords || '';
         let pattern = new RegExp(keywords, "i");
@@ -62,7 +62,7 @@ function productRouter(app) {
                 name: pattern,
                 pro_status: 0
             }).populate(opt).skip(skip).limit(limit).sort({
-                createdAt: -1
+                order_index: -1
             });
 
             if (productList.length > 0) {
@@ -137,7 +137,8 @@ function productRouter(app) {
                         desc: body.desc,
                         pro_status: body.pro_status,
                         origin_price: body.origin_price,
-                        origin_price_unit: body.origin_price_unit
+                        origin_price_unit: body.origin_price_unit,
+                        order_index: body.order_index
                     }
                 }).exec();
 
