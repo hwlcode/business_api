@@ -59,7 +59,7 @@ function productRouter(app) {
             });
         }); })();
     });
-    // app商品列表
+    // 后台商品列表（弃用）
     app.get('/api/productList', function (req, res) {
         var page = parseInt(req.query.q) || 1;
         var limit = 10;
@@ -92,7 +92,7 @@ function productRouter(app) {
             });
         }); })();
     });
-    // 后台商品列表（弃用）
+    // app商品列表
     app.get('/api/products/list', function (req, res) {
         var keywords = req.query.keywords || '';
         var pattern = new RegExp(keywords, "i");

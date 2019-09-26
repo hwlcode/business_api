@@ -24,7 +24,7 @@ function productRouter(app) {
             res.json({code: 0, msg: 'success'});
         })();
     });
-    // app商品列表
+    // 后台商品列表（弃用）
     app.get('/api/productList', (req, res) => {
         let page = parseInt(req.query.q) || 1;
         let limit = 10;
@@ -46,7 +46,7 @@ function productRouter(app) {
             });
         })();
     });
-    // 后台商品列表（弃用）
+    // app商品列表
     app.get('/api/products/list', (req, res) => {
         let keywords = req.query.keywords || '';
         let pattern = new RegExp(keywords, "i");
