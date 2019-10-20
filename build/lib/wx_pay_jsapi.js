@@ -132,7 +132,7 @@ var WechatPay = /** @class */ (function () {
         var that = this;
         var prepay_id_promise = that.getPrepayId(obj);
         prepay_id_promise.then(function (prepay_id) {
-            console.log(prepay_id);
+            // console.log(prepay_id);
             var wcPayParams = {
                 "appId": wx_config_1.WXCONFIG.wxappid,
                 "timeStamp": new Date().getTime() / 1000 + '',
