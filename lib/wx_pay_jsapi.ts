@@ -138,7 +138,7 @@ export class WechatPay {
         let that = this;
         let prepay_id_promise = that.getPrepayId(obj);
         prepay_id_promise.then(function (prepay_id) {
-            // console.log(prepay_id);
+            console.log(prepay_id);
             let wcPayParams = {
                 "appId": WXCONFIG.wxappid,     //公众号名称，由商户传入
                 "timeStamp": new Date().getTime() / 1000 + '',         //时间戳，自1970年以来的秒数
