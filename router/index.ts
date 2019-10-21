@@ -199,6 +199,7 @@ function productRouter(app) {
 
         (async () => {
             let total = 0;
+            let isLast = false;
             if (req.query.id != null) {
                 // app
                 id = new ObjectId(req.query.id);
@@ -211,6 +212,7 @@ function productRouter(app) {
                     status: {$lt: 1000}
                 });
                 total = allOrders.length;
+                isLast = (page * limit) >= allOrders.length;
             } else {
                 // admin 后台
                 if (keywords == null) {
@@ -220,6 +222,7 @@ function productRouter(app) {
                     }).skip(skip).limit(limit).sort({createdAt: -1, status: -1}).exec();
                     let allOrders = await OrderModel.find().exec();
                     total = allOrders.length;
+                    isLast = (page * limit) >= allOrders.length;
                 } else {
                     // 测试jenkins
                     // search
@@ -232,6 +235,7 @@ function productRouter(app) {
                         // status: {$gte: 1}
                     }).exec();
                     total = allOrders.length;
+                    isLast = (page * limit) >= allOrders.length;
                 }
 
             }
@@ -240,7 +244,8 @@ function productRouter(app) {
                 code: 0,
                 msg: 'success',
                 orders: orders,
-                total: total
+                total: total,
+                isLast: isLast
             });
         })();
     });

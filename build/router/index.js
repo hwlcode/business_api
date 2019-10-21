@@ -290,11 +290,12 @@ function productRouter(app) {
         var skip = (page - 1) * limit;
         var keywords = req.query.keywords || '';
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var total, allOrders, allOrders, allOrders;
+            var total, isLast, allOrders, allOrders, allOrders;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         total = 0;
+                        isLast = false;
                         if (!(req.query.id != null)) return [3 /*break*/, 3];
                         // app
                         id = new ObjectId(req.query.id);
@@ -311,6 +312,7 @@ function productRouter(app) {
                     case 2:
                         allOrders = _a.sent();
                         total = allOrders.length;
+                        isLast = (page * limit) >= allOrders.length;
                         return [3 /*break*/, 9];
                     case 3:
                         if (!(keywords == null)) return [3 /*break*/, 6];
@@ -324,6 +326,7 @@ function productRouter(app) {
                     case 5:
                         allOrders = _a.sent();
                         total = allOrders.length;
+                        isLast = (page * limit) >= allOrders.length;
                         return [3 /*break*/, 9];
                     case 6: return [4 /*yield*/, models_1.OrderModel.find({
                             sn: new RegExp(keywords, 'i'),
@@ -338,13 +341,15 @@ function productRouter(app) {
                     case 8:
                         allOrders = _a.sent();
                         total = allOrders.length;
+                        isLast = (page * limit) >= allOrders.length;
                         _a.label = 9;
                     case 9:
                         res.json({
                             code: 0,
                             msg: 'success',
                             orders: orders,
-                            total: total
+                            total: total,
+                            isLast: isLast
                         });
                         return [2 /*return*/];
                 }
