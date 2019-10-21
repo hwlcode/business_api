@@ -8,7 +8,7 @@ let OrderSchema = new Schema({
     sumPrice: {type: Number, default: 0},
     status: {type: Number, default: 0}, // 0：初始状态  1：己支付  2：己发货, 1000: 己删除
     customer: {type: Schema.Types.ObjectId, ref: 'User'},
-    type: {type: Number, default: 0},
+    type: {type: Number, default: 0}, // 预留字段，暂时没用上
     payway: {type: Number, default: 0}, // 0：支付宝 1：微信支付
     address: {type: Schema.Types.ObjectId, ref: 'Address'},
     transaction_id: {type: String, default: ''}, // 微信平台交易订单号
