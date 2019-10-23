@@ -312,6 +312,7 @@ function productRouter(app) {
                     case 2:
                         allOrders = _a.sent();
                         total = allOrders.length;
+                        // console.log(page, limit, page * limit, allOrders.length);
                         isLast = (page * limit) >= allOrders.length;
                         return [3 /*break*/, 9];
                     case 3:

@@ -212,6 +212,7 @@ function productRouter(app) {
                     status: {$lt: 1000}
                 });
                 total = allOrders.length;
+                // console.log(page, limit, page * limit, allOrders.length);
                 isLast = (page * limit) >= allOrders.length;
             } else {
                 // admin 后台
