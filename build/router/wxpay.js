@@ -126,14 +126,14 @@ function wxpay(app) {
         var notifyObj = req.body.xml;
         // console.log('gong zhong hao notify');
         // console.log(notifyObj);
-        if (notifyObj.result_code[0] == 'SUCCESS') {
+        if (notifyObj['result_code'][0] == 'SUCCESS') {
             var xml = '<xml>';
             xml += '<return_code><![CDATA[SUCCESS]]></return_code>';
             xml += '<return_msg><![CDATA[OK]]></return_msg>';
             xml += '</xml>';
             res.send(xml);
         }
-        else if (notifyObj.result_code[0] == 'FAIL') {
+        else if (notifyObj['result_code'][0] == 'FAIL') {
             var xml = '<xml>';
             xml += '<return_code><![CDATA[SUCCESS]]></return_code>';
             xml += '<return_msg><![CDATA[FAIL]]></return_msg>';
