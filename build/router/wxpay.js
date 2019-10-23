@@ -125,21 +125,21 @@ function wxpay(app) {
     app.post('/api/pay/wx_pay/notifyUrl', function (req, res) {
         var notifyObj = req.body.xml;
         // console.log('gong zhong hao notify');
-        console.log(req);
-        if (notifyObj['result_code'][0] == 'SUCCESS') {
-            var xml = '<xml>';
-            xml += '<return_code><![CDATA[SUCCESS]]></return_code>';
-            xml += '<return_msg><![CDATA[OK]]></return_msg>';
-            xml += '</xml>';
-            res.send(xml);
-        }
-        else if (notifyObj['result_code'][0] == 'FAIL') {
-            var xml = '<xml>';
-            xml += '<return_code><![CDATA[SUCCESS]]></return_code>';
-            xml += '<return_msg><![CDATA[FAIL]]></return_msg>';
-            xml += '</xml>';
-            res.send(xml);
-        }
+        console.log(req.body);
+        // if (notifyObj['result_code'][0] == 'SUCCESS') {
+        //     var xml = '<xml>';
+        //     xml += '<return_code><![CDATA[SUCCESS]]></return_code>';
+        //     xml += '<return_msg><![CDATA[OK]]></return_msg>';
+        //     xml += '</xml>';
+        //     res.send(xml);
+        // }
+        // else if (notifyObj['result_code'][0] == 'FAIL') {
+        //     var xml = '<xml>';
+        //     xml += '<return_code><![CDATA[SUCCESS]]></return_code>';
+        //     xml += '<return_msg><![CDATA[FAIL]]></return_msg>';
+        //     xml += '</xml>';
+        //     res.send(xml);
+        // }
     });
     // 公众号支付: 订单查询
     app.get('/api/pay/wx_pay/public/orderQuery', function (req, res) {
