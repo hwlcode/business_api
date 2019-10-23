@@ -54,7 +54,7 @@ function uploaderAPKRouter(app) {
 
     app.post('/api/upload/apk', upload.single('apk'), function (req, res, next) {
         const file = req.apk;
-        console.log(file);
+        // console.log(file);
         (async () => {
             // var img = await Models.ImagesModel.create({
             //     mimeType: file.mimetype,

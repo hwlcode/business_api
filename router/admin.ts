@@ -81,7 +81,7 @@ function AdminRouter(app) {
                     password: body.newPassword
                 }
             }, (err, raw) => {
-                console.log(err, raw);
+                // console.log(err, raw);
             });
 
             res.json({

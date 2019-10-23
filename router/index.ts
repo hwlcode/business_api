@@ -389,7 +389,7 @@ function productRouter(app) {
                 }
             }, function (err) {
                 if (err) {
-                    console.log(err);
+                    // console.log(err);
                 }
             });
 

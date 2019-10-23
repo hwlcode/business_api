@@ -148,7 +148,7 @@ function AdminRouter(app) {
                                     password: body.newPassword
                                 }
                             }, function (err, raw) {
-                                console.log(err, raw);
+                                // console.log(err, raw);
                             })];
                     case 1:
                         _a.sent();

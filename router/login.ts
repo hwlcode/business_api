@@ -39,12 +39,12 @@ function loginRouter(app) {
             if (Code === 'OK') {
                 //处理返回参数
                 verifyCode = msgCode;
-                console.log(data['Message'], '验证码为：' + verifyCode);
+                // console.log(data['Message'], '验证码为：' + verifyCode);
                 res.send({code: verifyCode});
             }
         }, function (err) {
             if (err) {
-                console.log(err['data']['Message'], '手机号为： ' + PhoneNumbers);
+                // console.log(err['data']['Message'], '手机号为： ' + PhoneNumbers);
                 res.json({code: 1, msg: '短信发送太频敏繁，请稍后再试'});
             }
         })
@@ -182,7 +182,7 @@ function loginRouter(app) {
             }
         }, function (err) {
             if (err) {
-                console.log(err);
+                // console.log(err);
             }
         });
     });

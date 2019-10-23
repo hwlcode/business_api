@@ -69,7 +69,7 @@ function wxpay(app) {
             spbill_create_ip: req.connection.remoteAddress.replace(/::ffff:/, ''),
         }, function (error, responseData) {
             if (error) {
-                console.log(error);
+                // console.log(error);
             }
             // console.log(responseData);
             res.json(responseData); /*签名字段*/
@@ -144,7 +144,7 @@ function wxpay(app) {
             //     }
             // }
         }, error => {
-            console.log(error);
+            // console.log(error);
         })
     });
 }
