@@ -89,7 +89,7 @@ class NewAlipay {
             amount: '10.00',
             goodsType: '0'
         });
-        console.log(params);
+        // console.log(params);
         return params;
     }
 

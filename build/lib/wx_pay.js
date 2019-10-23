@@ -210,7 +210,7 @@ var WxPay = /** @class */ (function () {
                     }, {
                         new: true
                     }, function (err, data) {
-                        console.log(data);
+                        // console.log(data);
                     });
                     resolve(args);
                 });

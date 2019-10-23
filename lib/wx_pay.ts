@@ -226,7 +226,7 @@ class WxPay {
                         }, {
                             new: true
                         }, (err, data) => {
-                            console.log(data);
+                            // console.log(data);
                         });
 
                         resolve(args);
